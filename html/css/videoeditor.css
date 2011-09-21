@@ -10,7 +10,7 @@ body {
     padding:        0 20px !important; /* override Layout default of '0' */
     margin:         0;
     /* set min dimensions for layout - window will scroll if smaller than this */
-    min-width:      950px;
+    min-width:      800px;
     min-height:     600px;
     /* max-width works for left-aligned layout - need a container-div to 'center' the layout */
     /*max-width:        1000px;*/
