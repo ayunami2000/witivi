@@ -18,6 +18,7 @@
     <SCRIPT type="text/javascript" src="lib/js/jquery.layout.resizePaneAccordions.min-1.0.js"></SCRIPT>
     <SCRIPT type="text/javascript" src="lib/js/themeswitchertool.js"></SCRIPT> 
     <SCRIPT type="text/javascript" src="lib/js/debug.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/model.js"></SCRIPT>
     <SCRIPT type="text/javascript" src="lib/js/videoeditor.js"></SCRIPT>
     <SCRIPT type="text/javascript">
         /*
@@ -143,7 +144,7 @@
             //setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
             
             //$( "#draggable" ).draggable({ containment: 'window', scroll: false, helper: "clone" });
-            
+            /*
             $("#draggable").draggable({
                 //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
                 helper: function () { 
@@ -152,16 +153,20 @@
                     return newhelper.appendTo('body').css('zIndex',5).show();
                 }
             ,   cursor: 'move'
-            });
+            });*/
 
             $(".library-item").click(function() {
-                previewMedia(this);                
+                alert(this);                
             });
 
             $(".timeline-object").click(function() {
-                previewMedia(this);            
+                alert(this);            
             });
-            
+
+            /*
+             * Model initialization
+             */
+            mediaLibrary.addMediaFiles(mediaFiles);
         });
     </SCRIPT> 
  
@@ -213,40 +218,10 @@
                         <!-- TODO add + button to import files from local file system here, get thumbnail? -->
                         <!-- TOOD add cut button to delete selected entries from the library -->
                         </DIV>
-                        <DIV class="ui-widget-content">
-
+                        <DIV class="ui-widget-content media-library-container">
                             <!-- TODO use jquery draggable for elements -->
                             <!-- TOOD use jquery selectable to select several elements -->
                             <!-- TODO add js-hotkeys to handle hotkeys like delete, enter, insert, ... -->
-                        
-                            <!-- videos thumbnails -->
-                            
-                            <!-- TODO change all this by a single div library-container which will be populated with library-item class divs from JS -->
-                            
-                            <div id="draggable" class="draggable ui-widget-content">
-                                <img src="media/thumb/20100516_005.mp4.avi.jpg" width=100% class="library-item"></img>
-                            </div>
-                                                        
-                            <img src="media/thumb/20100516_007.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20100525_003.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20101011_001.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=100% class="library-item"></img>
-                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=100% class="library-item"></img>
-                            
-                            <!-- image thumbnails -->                            
-                            <img src="media/thumb/20100513_004.jpg.jpg" width=100% class="library-item">></img>
-                            <img src="media/thumb/20100516_015.jpg.jpg" width=100% class="library-item">></img>
-                            <img src="media/thumb/20110202_008.jpg.jpg" width=100% class="library-item">></img>
-                            <img src="media/thumb/20110202_023.jpg.jpg" width=100% class="library-item">></img>
-                            <img src="media/thumb/20110216_004.jpg.jpg" width=100% class="library-item">></img>
-                            <img src="media/thumb/20110227_002.jpg.jpg" width=100% class="library-item">></img>
-                        
                         </DIV>
                         <!--
                         <DIV class="ui-widget-footer ui-widget-header ui-corner-bottom">footer info</DIV>
