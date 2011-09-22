@@ -1,185 +1,181 @@
 <!DOCTYPE html> 
 <HTML> 
 <HEAD>
-	<META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-	<TITLE>GES Webkit Video Editor Demo by Collabora Ltd.</TITLE>
+    <TITLE>GES Webkit Video Editor Demo by Collabora Ltd.</TITLE>
 
-	<LINK rel="stylesheet" type="text/css" href="lib/js/jquery.ui/themes/base/jquery.ui.all.css">
-	<LINK rel="stylesheet" type="text/css" href="css/videoeditor.css">
-	<STYLE type="text/css">
-	</STYLE>
+    <LINK rel="stylesheet" type="text/css" href="lib/js/jquery.ui/themes/base/jquery.ui.all.css">
+    <LINK rel="stylesheet" type="text/css" href="css/videoeditor.css">
+    <STYLE type="text/css">
+       <!-- NOTE: this is just for quick testing, use css/videoedtior.css preferably --> 
+    </STYLE>
 
-	<SCRIPT type="text/javascript" src="lib/js/jquery-latest.js"></SCRIPT>
-	<SCRIPT type="text/javascript" src="lib/js/jquery-ui-latest.js"></SCRIPT>
-	<SCRIPT type="text/javascript" src="lib/js/jquery.layout-latest.js"></SCRIPT>
-	<SCRIPT type="text/javascript" src="lib/js/jquery.layout.resizeTabLayout.min-1.1.js"></SCRIPT>
-	<SCRIPT type="text/javascript" src="lib/js/jquery.layout.resizePaneAccordions.min-1.0.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/jquery-latest.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/jquery-ui-latest.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/jquery.layout-latest.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/jquery.layout.resizeTabLayout.min-1.1.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/jquery.layout.resizePaneAccordions.min-1.0.js"></SCRIPT>
     <SCRIPT type="text/javascript" src="lib/js/themeswitchertool.js"></SCRIPT> 
-	<SCRIPT type="text/javascript" src="lib/js/debug.js"></SCRIPT>
-	<SCRIPT type="text/javascript">
-    	/*
-    	 *	Utility methos used for UI Theme Selector
-    	 */
-    	function toggleCustomTheme () {
-    		$('body').toggleClass('custom');
-    		resizePageLayout();
-    	};
+    <SCRIPT type="text/javascript" src="lib/js/debug.js"></SCRIPT>
+    <SCRIPT type="text/javascript" src="lib/js/videoeditor.js"></SCRIPT>
+    <SCRIPT type="text/javascript">
+        /*
+         * NOTE: just put here code related to UI, for example initialization of jquery layout, jquery ui 
+         */
+        
+        /*
+         *  Utility methos used for UI Theme Selector
+         */
+        function toggleCustomTheme () {
+            $('body').toggleClass('custom');
+            resizePageLayout();
+        };
     
-    	function resizePageLayout () {
-    		var pageLayout = $("body").data("layout");
-    		if (pageLayout) pageLayout.resizeAll();
-    	};
+        function resizePageLayout () {
+            var pageLayout = $("body").data("layout");
+            if (pageLayout) pageLayout.resizeAll();
+        };
     
-    	/*
-    	 *	Define options for all the layouts
-    	 */
+        /*
+         *  Define options for all the layouts
+         */
     
-    	var pageLayoutOptions = {
-    		name:					'pageLayout' // only for debugging
-    	,	resizeWithWindowDelay:	250		// delay calling resizeAll when window is *still* resizing
-    	//,	resizeWithWindowMaxDelay: 2000	// force resize every XX ms while window is being resized
-    	,	resizable:				false
-    	,	slidable:				false
-    	,	closable:				false
-    	,	north__paneSelector:	"#outer-north"
-    	,	center__paneSelector:	"#outer-center" 
-    	,	south__paneSelector:	"#outer-south" 
-    	,	south__spacing_open:	0
-    	,	north__spacing_open:	0
-    	};
+        var pageLayoutOptions = {
+            name:                   'pageLayout' // only for debugging
+        ,   resizeWithWindowDelay:  250     // delay calling resizeAll when window is *still* resizing
+        //, resizeWithWindowMaxDelay: 2000  // force resize every XX ms while window is being resized
+        ,   resizable:              false
+        ,   slidable:               false
+        ,   closable:               false
+        ,   north__paneSelector:    "#outer-north"
+        ,   center__paneSelector:   "#outer-center" 
+        ,   south__paneSelector:    "#outer-south" 
+        ,   south__spacing_open:    0
+        ,   north__spacing_open:    0
+        };
     
-    	var tabsContainerLayoutOptions = {
-    		name:					'tabsContainerLayout' // only for debugging
-    	,	resizable:				false
-    	,	slidable:				false
-    	,	closable:				false
-    	,	north__paneSelector:	"#tabbuttons"
-    	,	center__paneSelector:	"#tabpanels" 
-    	,	spacing_open:			0
-    	,	center__onresize:		$.layout.callbacks.resizeTabLayout // resize ALL visible layouts nested inside
-    	}; 
+        var tabsContainerLayoutOptions = {
+            name:                   'tabsContainerLayout' // only for debugging
+        ,   resizable:              false
+        ,   slidable:               false
+        ,   closable:               false
+        ,   north__paneSelector:    "#tabbuttons"
+        ,   center__paneSelector:   "#tabpanels" 
+        ,   spacing_open:           0
+        ,   center__onresize:       $.layout.callbacks.resizeTabLayout // resize ALL visible layouts nested inside
+        }; 
     
-    	var tabLayoutOptions = {
-    		name:					'tabPanelLayout' // only for debugging
-    	,	resizeWithWindow:		false	// required because layout is 'nested' inside tabpanels container
-    	//,	resizeWhileDragging:	true	// slow in IE because of the nested layouts
-    	,	resizerDragOpacity:		0.5
-    	,	north__resizable:		false
-    	,	south__resizable:		false
-    	,	north__closable:		false
-    	,	south__closable:		false
-    	,	west__minSize:			200
-    	,	east__minSize:			200
-    	,	center__minWidth:		400
-    	,	spacing_open:			10
-    	,	spacing_closed:			10
-    	,	contentSelector:		".ui-widget-content"
-    	,	togglerContent_open:	'<div class="ui-icon"></div>'
-    	,	togglerContent_closed:	'<div class="ui-icon"></div>'
-    	,	triggerEventsOnLoad:	true // so center__onresize is triggered when layout inits
-    	,	center__onresize:		$.layout.callbacks.resizePaneAccordions // resize ALL Accordions nested inside
-    	,	west__onresize:			$.layout.callbacks.resizePaneAccordions // ditto for west-pane
-    	/*
-    	,	center__onresize: function (pane, $Pane) {
-    			$Pane.find(":ui-accordion").accordion("resize");
-    		}
-    	*/
-    	//	after the layout loads, init sidebar-layouts...
-    	,	onload: function ( layout ) {
-    			layout.panes.west.layout( sidebarLayoutOptions );
+        var tabLayoutOptions = {
+            name:                   'tabPanelLayout' // only for debugging
+        ,   resizeWithWindow:       false   // required because layout is 'nested' inside tabpanels container
+        //, resizeWhileDragging:    true    // slow in IE because of the nested layouts
+        ,   resizerDragOpacity:     0.5
+        ,   north__resizable:       false
+        ,   south__resizable:       false
+        ,   north__closable:        false
+        ,   south__closable:        false
+        ,   west__minSize:          200
+        ,   east__minSize:          200
+        ,   center__minWidth:       400
+        ,   spacing_open:           10
+        ,   spacing_closed:         10
+        ,   contentSelector:        ".ui-widget-content"
+        ,   togglerContent_open:    '<div class="ui-icon"></div>'
+        ,   togglerContent_closed:  '<div class="ui-icon"></div>'
+        ,   triggerEventsOnLoad:    true // so center__onresize is triggered when layout inits
+        ,   center__onresize:       $.layout.callbacks.resizePaneAccordions // resize ALL Accordions nested inside
+        ,   west__onresize:         $.layout.callbacks.resizePaneAccordions // ditto for west-pane
+        //  after the layout loads, init sidebar-layouts...
+        ,   onload: function ( layout ) {
+                layout.panes.west.layout( sidebarLayoutOptions );
                 layout.panes.center.layout( sidebarLayoutOptions );
-    		}
-    	};
+            }
+        };
     
-    	var sidebarLayoutOptions = {
-    		name:					'sidebarLayout' // only for debugging
-    	,	showErrorMessages:		false	// some panes do not have an inner layout
-    	,	resizeWhileDragging:	true
-    	,   north__size:			"30%"
-    	,   south__size:			"30%"
-    	,	minSize:				100
-    	,	center__minHeight:		100
-    	,	spacing_open:			10
-    	,	spacing_closed:			10
-    	,	contentSelector:		".ui-widget-content"
-    	,	togglerContent_open:	'<div class="ui-icon"></div>'
-    	,	togglerContent_closed:	'<div class="ui-icon"></div>'
-    	};
+        var sidebarLayoutOptions = {
+            name:                   'sidebarLayout' // only for debugging
+        ,   showErrorMessages:      false   // some panes do not have an inner layout
+        ,   resizeWhileDragging:    true
+        ,   north__size:            "30%"
+        ,   south__size:            "30%"
+        ,   minSize:                100
+        ,   center__minHeight:      100
+        ,   spacing_open:           10
+        ,   spacing_closed:         10
+        ,   contentSelector:        ".ui-widget-content"
+        ,   togglerContent_open:    '<div class="ui-icon"></div>'
+        ,   togglerContent_closed:  '<div class="ui-icon"></div>'
+        };
     
-    /*
-        var innerLayout = $('div.outer-center').layout({ 
-            center__paneSelector:   ".inner-center" 
-        ,   east__paneSelector:     ".inner-east" 
-        ,   east__size:             200 
-        ,   south__paneSelector:    ".inner-south" 
-        ,   south__size:            200 
-        ,   spacing_open:           8  // ALL panes
-        ,   spacing_closed:         12 // ALL panes
-        });                
-    */
+        $(document).ready( function() {
     
-    	$(document).ready( function() {
+            var pageLayout = $("body").layout( pageLayoutOptions ); 
     
-    		var pageLayout = $("body").layout( pageLayoutOptions ); 
+            // first init the tabs inside the center-pane
+            // then init the layout that wraps them
+            pageLayout.panes.center
+                .tabs({
+                    // using callback addon
+                    show: $.layout.callbacks.resizeTabLayout
     
-    		// first init the tabs inside the center-pane
-    		// then init the layout that wraps them
-    		pageLayout.panes.center
-    			.tabs({
-    				// using callback addon
-    				show: $.layout.callbacks.resizeTabLayout
+                    /* OR using a manual/custom callback
+                    show: function (evt, ui) {
+                        var tabLayout = $(ui.panel).data("layout");
+                        if ( tabLayout ) tabLayout.resizeAll();
+                    }*/
+                })
+                // make the tabs sortable
+                .find(".ui-tabs-nav") .sortable({ axis: 'x', zIndex: 2 }) .end()
+                // create the layout to wrap the tab buttons (north) and panels (center)
+                .layout( tabsContainerLayoutOptions )
+            ;
     
-    				/* OR using a manual/custom callback
-    				show: function (evt, ui) {
-    					var tabLayout = $(ui.panel).data("layout");
-    					if ( tabLayout ) tabLayout.resizeAll();
-    				}*/
-    			})
-    			// make the tabs sortable
-    			.find(".ui-tabs-nav") .sortable({ axis: 'x', zIndex: 2 }) .end()
-    			// create the layout to wrap the tab buttons (north) and panels (center)
-    			.layout( tabsContainerLayoutOptions )
-    		;
+            // init ALL the tab-layouts - all use the same options
+            $("#tab1").layout( tabLayoutOptions );
     
-    		// init inner-tabs inside outer-tab #3
-    		$("#innerTabs").tabs({
-    			// look for and resize inner-accordion(s) each time a tab-panel is shown
-    			show: $.layout.callbacks.resizePaneAccordions
-    		});
-    
-    		// init ALL the tab-layouts - all use the same options
-    		$("#tab1").layout( tabLayoutOptions );
-    
-    		// init ALL accordions (all have .accordion class assigned)
-    		//$(".accordion").accordion({ fillSpace: true });
-    
-    		/* UI pseudo-classes allow all UI elements to be easily found...
-    		alert( 'Number of Accordion widgets = '+ $(":ui-accordion").length );
-    		alert( 'Number of Tabs widgets = '+ $(":ui-tabs").length );
-    		*/
-    
-    		//addThemeSwitcher('#outer-north',{ top: '13px', right: '20px' });
-    		// if a theme is applied by ThemeSwitch *onLoad*, it may change the height of some content,
-    		// so we need to call resizeLayout to 'correct' any header/footer heights affected
-    		// call multiple times so fast browsers update quickly, and slower ones eventually!
-    		// NOTE: this is only necessary because we are changing CSS *AFTER LOADING* (eg: themeSwitcher)
-    		//setTimeout( resizePageLayout, 1000 ); /* allow time for browser to re-render for theme */
-    		//setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
-    	});
-	</SCRIPT> 
+            //addThemeSwitcher('#outer-north',{ top: '13px', right: '20px' });
+            // if a theme is applied by ThemeSwitch *onLoad*, it may change the height of some content,
+            // so we need to call resizeLayout to 'correct' any header/footer heights affected
+            // call multiple times so fast browsers update quickly, and slower ones eventually!
+            // NOTE: this is only necessary because we are changing CSS *AFTER LOADING* (eg: themeSwitcher)
+            //setTimeout( resizePageLayout, 1000 ); /* allow time for browser to re-render for theme */
+            //setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
+            
+            //$( "#draggable" ).draggable({ containment: 'window', scroll: false, helper: "clone" });
+            
+            $("#draggable").draggable({
+                //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
+                helper: function () { 
+                    var newhelper = $(this).clone();
+                    // change size of newhelper.children("img")[0];
+                    return newhelper.appendTo('body').css('zIndex',5).show();
+                }
+            ,   cursor: 'move'
+            });
+
+            $(".library-item").click(function() {
+                previewMedia(this);                
+            });
+
+            $(".timeline-object").click(function() {
+                previewMedia(this);            
+            });
+            
+        });
+    </SCRIPT> 
  
 </HEAD> 
 <BODY class="custom"> 
 
     <DIV id="outer-north">
-        <!--        
-    	<DIV class="buttons">
-    		<BUTTON onClick="toggleCustomTheme()">Toggle Custom Theme</BUTTON>
-    		<BUTTON onClick="removeUITheme(); resizePageLayout()">Remove UI Theme</BUTTON>
-    		<BUTTON onClick="resizePageLayout()">Resize Layout</BUTTON>
-    	</DIV>
-    	x-->
+        <!-- Theme changer disabled        
+        <DIV class="buttons">
+            <BUTTON onClick="toggleCustomTheme()">Toggle Custom Theme</BUTTON>
+            <BUTTON onClick="removeUITheme(); resizePageLayout()">Remove UI Theme</BUTTON>
+            <BUTTON onClick="resizePageLayout()">Resize Layout</BUTTON>
+        </DIV>
+        -->
     </DIV>
 
     <DIV id="page-loading">Loading...</DIV>
@@ -188,57 +184,68 @@
 
     <DIV id="outer-center" class="hidden">
 
-    	<UL id="tabbuttons" class="hidden">
-    		<LI class="tab1"><A href="#tab1">GES Webkit Video Editor Demo</A></LI>
-    		<!--
-    		<LI class="tab2"><A href="#tab2">Outer Tab Two</A></LI>
-    		<LI class="tab3"><A href="#tab3">Outer Tab Three</A></LI>
-    		-->
-    	</UL>
+        <UL id="tabbuttons" class="hidden">
+            <LI class="tab1"><A href="#tab1">GES Webkit Video Editor Demo</A></LI>
+        </UL>
 
-    	<DIV id="tabpanels">
+        <DIV id="tabpanels">
     
-    		<DIV id="tab1" class="tab-panel ui-tabs-hide">
-    		
-    			<DIV class="ui-layout-north ui-widget">
-    				<DIV class="toolbar ui-widget-content ui-state-active">
-    				<!--Toolbar-->
-    				</DIV>
-    			</DIV>
-    			
-    			<DIV class="ui-layout-south ui-widget">
-    				<DIV class="toolbar ui-widget-content ui-state-default">
-    				<!-- Statusbar -->
-    				</DIV>
-    			</DIV>
-    			
+            <DIV id="tab1" class="tab-panel ui-tabs-hide">
+            
+                <DIV class="ui-layout-north ui-widget">
+                    <DIV class="toolbar ui-widget-content ui-state-active">
+                    <!--Toolbar-->
+                    </DIV>
+                </DIV>
+                
+                <DIV class="ui-layout-south ui-widget">
+                    <DIV class="toolbar ui-widget-content ui-state-default">
+                    <!-- Statusbar -->
+                    </DIV>
+                </DIV>
+                
                 <DIV class="ui-layout-west">
                 
                     <DIV class="ui-layout-center">
-                        <DIV class="ui-widget-header ui-corner-top">Library</DIV>
+                        <DIV class="ui-widget-header ui-corner-top">
+                        Library
+                        <!-- TODO add toggle button for image / videos / test source / audio?/  segments? ... -->
+                        <!-- TODO add + button to import files from local file system here, get thumbnail? -->
+                        <!-- TOOD add cut button to delete selected entries from the library -->
+                        </DIV>
                         <DIV class="ui-widget-content">
+
+                            <!-- TODO use jquery draggable for elements -->
+                            <!-- TOOD use jquery selectable to select several elements -->
+                            <!-- TODO add js-hotkeys to handle hotkeys like delete, enter, insert, ... -->
                         
                             <!-- videos thumbnails -->
-                            <img src="media/thumb/20100516_005.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20100516_007.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20100525_003.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20101011_001.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=100%></img>
-                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=100%></img>
+                            
+                            <!-- TODO change all this by a single div library-container which will be populated with library-item class divs from JS -->
+                            
+                            <div id="draggable" class="draggable ui-widget-content">
+                                <img src="media/thumb/20100516_005.mp4.avi.jpg" width=100% class="library-item"></img>
+                            </div>
+                                                        
+                            <img src="media/thumb/20100516_007.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20100525_003.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20101011_001.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=100% class="library-item"></img>
+                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=100% class="library-item"></img>
                             
                             <!-- image thumbnails -->                            
-                            <img src="media/thumb/20100513_004.jpg.jpg" width=100%></img>
-                            <img src="media/thumb/20100516_015.jpg.jpg" width=100%></img>
-                            <img src="media/thumb/20110202_008.jpg.jpg" width=100%></img>
-                            <img src="media/thumb/20110202_023.jpg.jpg" width=100%></img>
-                            <img src="media/thumb/20110216_004.jpg.jpg" width=100%></img>
-                            <img src="media/thumb/20110227_002.jpg.jpg" width=100%></img>
+                            <img src="media/thumb/20100513_004.jpg.jpg" width=100% class="library-item">></img>
+                            <img src="media/thumb/20100516_015.jpg.jpg" width=100% class="library-item">></img>
+                            <img src="media/thumb/20110202_008.jpg.jpg" width=100% class="library-item">></img>
+                            <img src="media/thumb/20110202_023.jpg.jpg" width=100% class="library-item">></img>
+                            <img src="media/thumb/20110216_004.jpg.jpg" width=100% class="library-item">></img>
+                            <img src="media/thumb/20110227_002.jpg.jpg" width=100% class="library-item">></img>
                         
                         </DIV>
                         <!--
@@ -246,13 +253,17 @@
                         -->
                     </DIV>
     
-                </DIV>    			
+                </DIV>              
 
                 <DIV class="ui-layout-center">
                 
                     <DIV class="ui-layout-center">
                         <DIV class="ui-widget-header ui-corner-top">Video Preview</DIV>
                         <DIV class="ui-widget-content">
+                            <!-- TODO handle image preview -->
+                            <!-- TODO handle audio only playback? -->
+                            <!-- TODO add jquery ui range-slider to set inpoint / outpoint -->
+                            <!-- TOOD provide text input entry for input / outpoint -->
                             <VIDEO SRC="media/source/20100818_006.mp4.avi" controls width=99% height=99%></VIDEO>
                         </DIV>
                         <!--
@@ -265,6 +276,8 @@
                         <DIV class="ui-widget-content">
                         
                             <table>
+                            
+                                <!-- TODO probably change all this to be populated from JS -->
                                 <tr>
                                     <td colspan="2"><b>train-entry-s1.mp4</b></td>
                                 </tr>
@@ -308,20 +321,35 @@
                     </DIV>                                        
 
                     <DIV class="ui-layout-south">
-                        <DIV class="ui-widget-header ui-corner-top">TIMELINE</DIV>
+                        <DIV class="ui-widget-header ui-corner-top">
+                        Timeline
+                        <!-- TODO add new timeline button, deletes all timeline objects -->
+                        <!-- TODO add load timeline (for v2) -->
+                        <!-- TODO add save timeline (for v2) -->
+                        <!-- TODO add cut button, to delete the timeline objects (explode / fade out when deleted) -->
+                        <!-- TODO add play button, to see the current timeline object -->
+                        <!-- TODO add save button, to render final video to a file -->
+                        <!-- TODO add some zoom in / zoom out buttons  -->
+                        </DIV>
                         <DIV class="ui-widget-content">
+                        
+                            <!-- TODO change all this by a single timeline container div which will be managed from JS -->
+                            <!-- TODO use jquery ui dropping to accept items from the library -->
+                            <!-- TODO use jquery ui sorting to reorder the elements in the timeline -->
+                            <!-- TODO use jquery ui selecting to do things with several timeline objects like delete them -->
+                            <!-- TODO use jquery ui resizing to zoom in / out elements ? -->
 
-                            <img src="media/thumb/20110227_002.jpg.jpg" width=150></img>
-                            <img src="media/thumb/20100516_005.mp4.avi.jpg" width=150></img>                            
-                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20110202_008.jpg.jpg" width=150></img>
-                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=150></img>
-                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=150></img>                            
-                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=150></img>
+                            <img src="media/thumb/20110227_002.jpg.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20100516_005.mp4.avi.jpg" width=150 class="timeline-object"></img>                            
+                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110202_008.jpg.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=150 class="timeline-object"></img>
+                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=150 class="timeline-object"></img>                            
+                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=150 class="timeline-object"></img>
 
                         </DIV>
                         <!--
@@ -331,9 +359,9 @@
 
                 </DIV>
 
-    			    			
-    		</DIV><!-- /#tab1 -->
-	   </DIV><!-- /#tabpanels -->
+                                
+            </DIV><!-- /#tab1 -->
+       </DIV><!-- /#tabpanels -->
     </DIV><!-- /#outer-center -->
 </BODY>
 </HTML>
