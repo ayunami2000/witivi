@@ -31,16 +31,18 @@ function MediaItem(filename) {
     this._thumbnail.setAttribute("width", "100%");
     this._thumbnail.setAttribute("class", "media-library-item draggable ui-widget-content");
 
-    //dumpObject(this._thumbnail.mediaItem());
-    //dumpObject(this._thumbnail.mediaItem());
-
     $(this._thumbnail).draggable({
         //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
-        helper: function () {
-            var newhelper = $(this).clone();
+        helper: function (x) {
+            var newhelper = $(self._thumbnail).clone().css({'width':'150px'});
             return newhelper.appendTo('body').css('zIndex',5).show();
         }
         ,   cursor: 'move'
+    });
+    
+    $(this._thumbnail).bind('click', function() {
+        console.log($('video'));
+        $('video').attr('src', filename);
     });
 
     return this;
