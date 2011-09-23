@@ -26,7 +26,7 @@ function MediaItem(filename) {
     // create thumbnail
     this._thumbnail = new Image();
     var self = this;
-    this._thumbnail.mediaItem = function() { return self; }
+    this._thumbnail.getMediaItem = function() { return self; }
     this._thumbnail.setAttribute("src", this._thumbnailSource);
     this._thumbnail.setAttribute("width", "100%");
     this._thumbnail.setAttribute("class", "media-library-item draggable ui-widget-content");
@@ -34,22 +34,27 @@ function MediaItem(filename) {
     $(this._thumbnail).draggable({
         //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
         helper: function (x) {
+            var mtui = new MediaTimelineUIItem(self);
+            this._mtui = mtui;
+            var newhelper = $(mtui.getThumbnail()).css({'width':'150px'}).addClass('media-timeline-item');
+                        /*
             var newhelper = $(self._thumbnail).clone().css({'width':'150px'});
+            this.clonnedObject = newhelper;*/
             return newhelper.appendTo('body').css('zIndex',5).show();
-        }
-        ,   cursor: 'move'
+        },
+        stop: function() {
+            console.log("stopping");
+            dumpObject(this._mtui.getThumbnail());
+        },
+        connectToSortable : '.media-timeline-container',
+        cursor: 'move'
     });
-    
+
     $(this._thumbnail).bind('click', function() {
-        console.log($('video'));
         $('video').attr('src', filename);
     });
 
     return this;
-}
-
-Image.prototype.getMediaItem = function() {
-    return this._mediaItem;
 }
 
 MediaItem.prototype.getType = function() {
@@ -59,6 +64,15 @@ MediaItem.prototype.getType = function() {
 MediaItem.prototype.getFilename = function() {
     return this._filename;
 };
+
+MediaItem.prototype.getURI = function() {
+    var src = this.getThumbnail().baseURI;
+    var lastIndex = src.lastIndexOf('/');
+    if (lastIndex == -1) {
+        return this.getFilename();
+    }
+    return src.slice(0,lastIndex).concat('/' + this._filename);
+}
 
 MediaItem.prototype.getBasename = function() {
     var path = this._filename.split("/");
@@ -142,26 +156,96 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
 }
 
 /*
- * Helper functions
+ * Media Timeline UI Item
+ */
+var MediaTimelineUIItem = function(mediaItem) {
+    this._mediaItem = mediaItem;
+
+    // create thumbnail
+    this._thumbnail = new Image();
+    var self = this;
+    this._thumbnail.getMediaItem = function() { return self._mediaItem; }
+    this._thumbnail.getMediaTimelineItem = function() { return self; }
+    this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
+    $(this._thumbnail).addClass('media-timeline-item ui-widget-content').css({'width':'150px'});
+
+    $(this._thumbnail).bind('click', function() {
+        $('video').attr('src', this.getMediaItem().getFilename());
+    });
+
+    return this;
+}
+
+MediaTimelineUIItem.prototype.getTimelineObject = function() {
+    if (!this._timelineObject) {
+        this._timelineObject = new MediaTimelineFileSource(mediaItem.getURI());
+    }
+    return this._timelineObject;
+}
+
+MediaTimelineUIItem.prototype.getThumbnail= function() {
+    return this._thumbnail;
+}
+
+MediaTimelineUIItem.prototype.getMediaItem= function() {
+    return this._mediaItem;
+}
+
+/*
+ * Media Timeline UI
  */
 
-function previewMedia(obj) {
-    // check if image / video / whatever
-    // preview on video element
-    // modify info properties of the window
-    alert("preview media");
+var MediaTimelineUI = function(timeline) {
+    this._timeline = timeline;
+    /*
+    $(".media-timeline-container").css({'wdith': '400px','height':'400px'});
+
+    $(".media-timeline-container").droppable({
+        drop: function(event, ui) {
+            console.log("Dropped stuff");
+        }
+    });*/
+
+    $( ".media-timeline-container" ).sortable({
+        //grid: [150, 150],
+        forceHelperSize: true
+    });
+    $( ".media-timeline-container" ).disableSelection();
+};
+
+MediaTimelineUI.prototype.addMediaItem = function(mediaItem) {
+    var item = new MediaTimelineUIItem(mediaItem);
+
+    // add timeline object to the timeline
+    var timelineObject = item.getTimelineObject();
+    this._timeline.addObject(item.getTimelineObject(), 0);
+
+    // make it appear in the UI too
+    $(".media-timeline-container").append( item.getThumbnail() );
 }
 
 /*
  * Data model
  */
 
-// Timeline to use in the video editor application
-//var editTimeline = new MediaTimeline();
+function initDataModel() {
+    mediaLibrary = new MediaLibrary();
+    mediaLibrary.addMediaFiles(mediaFiles);
 
-// media items
-var editTimelineMediaItem = null;
-var currentMediaItem = null;
+    mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
+}
+
+/*
+ * Data model
+ */
 
 // media library
-var mediaLibrary = new MediaLibrary();
+var mediaLibrary;
+
+// Timeline to use in the video editor application
+//var editTimeline = new MediaTimeline();
+var mediaTimelineUI;
+
+// media items
+//var editTimelineMediaItem;
+//var currentMediaItem;

@@ -8,7 +8,7 @@
     <LINK rel="stylesheet" type="text/css" href="lib/js/jquery.ui/themes/base/jquery.ui.all.css">
     <LINK rel="stylesheet" type="text/css" href="css/videoeditor.css">
     <STYLE type="text/css">
-       <!-- NOTE: this is just for quick testing, use css/videoedtior.css preferably --> 
+        <!-- NOTE: this is just for quick testing, use css/videoeditor.css preferably -->
     </STYLE>
 
     <SCRIPT type="text/javascript" src="lib/js/jquery-latest.js"></SCRIPT>
@@ -166,7 +166,7 @@
             /*
              * Model initialization
              */
-            mediaLibrary.addMediaFiles(mediaFiles);
+            initDataModel();
         });
     </SCRIPT> 
  
@@ -219,8 +219,8 @@
                         <!-- TOOD add cut button to delete selected entries from the library -->
                         </DIV>
                         <DIV class="ui-widget-content media-library-container">
-                            <!-- TODO handle image preview -->                        
-                            <!-- TOOD use jquery selectable to select several elements -->
+                            <!-- TODO handle properties -->
+                            <!-- TODO use jquery selectable to select several elements -->
                             <!-- TODO add js-hotkeys to handle hotkeys like delete, enter, insert, ... -->
                         </DIV>
                         <!--
@@ -306,26 +306,11 @@
                         <!-- TODO add save button, to render final video to a file -->
                         <!-- TODO add some zoom in / zoom out buttons  -->
                         </DIV>
-                        <DIV class="ui-widget-content">
-                        
-                            <!-- TODO change all this by a single timeline container div which will be managed from JS -->
+                        <div class="media-timeline-container ui-widget-content" width="100%" height="100%">
                             <!-- TODO use jquery ui dropping to accept items from the library -->
                             <!-- TODO use jquery ui sorting to reorder the elements in the timeline -->
                             <!-- TODO use jquery ui selecting to do things with several timeline objects like delete them -->
                             <!-- TODO use jquery ui resizing to zoom in / out elements ? -->
-
-                            <img src="media/thumb/20110227_002.jpg.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20100516_005.mp4.avi.jpg" width=150 class="timeline-object"></img>                            
-                            <img src="media/thumb/20100818_011.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20100818_006.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110202_008.jpg.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110101_002.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110101_003.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110101_004.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110101_006.mp4.avi.jpg" width=150 class="timeline-object"></img>
-                            <img src="media/thumb/20110101_007.mp4.avi.jpg" width=150 class="timeline-object"></img>                            
-                            <img src="media/thumb/20101105_002.mp4.avi.jpg" width=150 class="timeline-object"></img>
-
                         </DIV>
                         <!--
                         <DIV class="ui-widget-footer ui-widget-header ui-corner-bottom">footer info</DIV>
