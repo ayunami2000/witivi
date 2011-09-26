@@ -28,7 +28,7 @@ function MediaItem(filename) {
     var self = this;
     this._thumbnail.getMediaItem = function() { return self; }
     this._thumbnail.setAttribute("src", this._thumbnailSource);
-    this._thumbnail.setAttribute("width", "100%");
+    this._thumbnail.setAttribute("width", "150px");
     this._thumbnail.setAttribute("class", "media-library-item draggable ui-widget-content");
 
     $(this._thumbnail).draggable({
@@ -36,15 +36,8 @@ function MediaItem(filename) {
         helper: function (x) {
             var mtui = new MediaTimelineUIItem(self);
             this._mtui = mtui;
-            var newhelper = $(mtui.getThumbnail()).css({'width':'150px'}).addClass('media-timeline-item');
-                        /*
-            var newhelper = $(self._thumbnail).clone().css({'width':'150px'});
-            this.clonnedObject = newhelper;*/
+            var newhelper = $(mtui.getThumbnail());//.attr('width', '150px').css({'width':'150px'}).addClass('media-timeline-item');
             return newhelper.appendTo('body').css('zIndex',5).show();
-        },
-        stop: function() {
-            console.log("stopping");
-            dumpObject(this._mtui.getThumbnail());
         },
         connectToSortable : '.media-timeline-container',
         cursor: 'move'
@@ -167,7 +160,7 @@ var MediaTimelineUIItem = function(mediaItem) {
     this._thumbnail.getMediaItem = function() { return self._mediaItem; }
     this._thumbnail.getMediaTimelineItem = function() { return self; }
     this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
-    $(this._thumbnail).addClass('media-timeline-item ui-widget-content').css({'width':'150px'});
+    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
 
     $(this._thumbnail).bind('click', function() {
         $('video').attr('src', this.getMediaItem().getFilename());
@@ -197,18 +190,8 @@ MediaTimelineUIItem.prototype.getMediaItem= function() {
 
 var MediaTimelineUI = function(timeline) {
     this._timeline = timeline;
-    /*
-    $(".media-timeline-container").css({'wdith': '400px','height':'400px'});
-
-    $(".media-timeline-container").droppable({
-        drop: function(event, ui) {
-            console.log("Dropped stuff");
-        }
-    });*/
 
     $( ".media-timeline-container" ).sortable({
-        //grid: [150, 150],
-        forceHelperSize: true
     });
     $( ".media-timeline-container" ).disableSelection();
 };
@@ -243,7 +226,6 @@ function initDataModel() {
 var mediaLibrary;
 
 // Timeline to use in the video editor application
-//var editTimeline = new MediaTimeline();
 var mediaTimelineUI;
 
 // media items
