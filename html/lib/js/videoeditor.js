@@ -34,10 +34,12 @@ function MediaItem(filename) {
     $(this._thumbnail).draggable({
         //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
         helper: function (x) {
-            var mtui = new MediaTimelineUIItem(self);
-            this._mtui = mtui;
-            var newhelper = $(mtui.getThumbnail());//.attr('width', '150px').css({'width':'150px'}).addClass('media-timeline-item');
+            var newhelper = $(this).clone();
+            currentDraggedMediaItem = self;
             return newhelper.appendTo('body').css('zIndex',5).show();
+        },
+        stop : function (x) {
+            currentDraggedMediaItem = null;
         },
         connectToSortable : '.media-timeline-container',
         cursor: 'move'
@@ -154,29 +156,42 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
 var MediaTimelineUIItem = function(mediaItem) {
     this._mediaItem = mediaItem;
 
-    // create thumbnail
-    this._thumbnail = new Image();
-    var self = this;
-    this._thumbnail.getMediaItem = function() { return self._mediaItem; }
-    this._thumbnail.getMediaTimelineItem = function() { return self; }
-    this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
-    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
-
-    $(this._thumbnail).bind('click', function() {
-        $('video').attr('src', this.getMediaItem().getFilename());
-    });
-
     return this;
 }
 
 MediaTimelineUIItem.prototype.getTimelineObject = function() {
     if (!this._timelineObject) {
-        this._timelineObject = new MediaTimelineFileSource(mediaItem.getURI());
+        this._timelineObject = new MediaTimelineFileSource(this._mediaItem.getURI());
     }
     return this._timelineObject;
 }
 
+MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
+    this._thumbnail = thumbnail;
+    var self = this;
+    this._thumbnail.getMediaItem = function() { return self._mediaItem; }
+    this._thumbnail.getMediaTimelineUIItem = function() { return self; }
+    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
+
+    $(this._thumbnail).bind('click', function() {
+        $('video').attr('src', this.getMediaItem().getFilename());
+    });
+}
+
 MediaTimelineUIItem.prototype.getThumbnail= function() {
+    if (!this._thumbnail) {
+        this._thumbnail = new Image();
+        var self = this;
+        this._thumbnail.getMediaItem = function() { return self._mediaItem; }
+        this._thumbnail.getMediaTimelineUIItem = function() { return self; }
+        this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
+        $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
+
+        $(this._thumbnail).bind('click', function() {
+            $('video').attr('src', this.getMediaItem().getFilename());
+        });
+    }
+
     return this._thumbnail;
 }
 
@@ -191,10 +206,29 @@ MediaTimelineUIItem.prototype.getMediaItem= function() {
 var MediaTimelineUI = function(timeline) {
     this._timeline = timeline;
 
-    $( ".media-timeline-container" ).sortable({
-    });
+    $( ".media-timeline-container" ).sortable({});
     $( ".media-timeline-container" ).disableSelection();
+    $( ".media-timeline-container" ).bind( "sortchange", function(event, ui) {
+        //console.log("sortchange");
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
+    $( ".media-timeline-container" ).bind( "sortreceive", function(event, ui) {
+        //console.log("sortreceive");
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
+    $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
+        console.log("sortupdate ui.position=" + ui.position + " offset="  + ui.offset);
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
+    $( ".media-timeline-container" ).bind( "sortremove", function(event, ui) {
+        console.log("sortremove ui.position=" + ui.position + " offset="  + ui.offset);
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
 };
+
+MediaTimelineUI.prototype.getMediaTimeline = function() {
+    return this._timeline;
+}
 
 MediaTimelineUI.prototype.addMediaItem = function(mediaItem) {
     var item = new MediaTimelineUIItem(mediaItem);
@@ -207,6 +241,28 @@ MediaTimelineUI.prototype.addMediaItem = function(mediaItem) {
     $(".media-timeline-container").append( item.getThumbnail() );
 }
 
+MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
+    $(".media-timeline-container img").each(function(index) {
+        // new element
+        if (typeof($(this).context.getMediaItem) == "undefined") {
+            console.log("new item found: " + index);
+            var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
+            mtui.setThumbnail($(this).context);
+            // add to the timeline to proper position
+            mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+        } else {
+            console.log("item was here before: " + index);
+            var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
+            if (mediaTimelineUI.getMediaTimeline().index(tlObject) != index) {
+                console.log("item has changed position " + mediaTimelineUI.getMediaTimeline().index(tlObject) + " to " + index);
+                mediaTimelineUI.getMediaTimeline().moveObject(tlObject, index);
+            }
+        }
+    });
+
+    // TODO check for removals
+};
+
 /*
  * Data model
  */
@@ -216,6 +272,62 @@ function initDataModel() {
     mediaLibrary.addMediaFiles(mediaFiles);
 
     mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
+}
+
+function initUI() {
+    $( "#timeline-play" ).button({
+        icons: { primary:  "ui-icon-play" },
+        text: false
+    }).click(function () {
+        $('video').attr('src', "ges://foobar");
+    });
+    $( "#timeline-new" ).button({
+        icons: { primary:  "ui-icon-document" },
+        text: false
+    });
+    $( "#timeline-load" ).button({
+        icons: { primary:  "ui-icon-folder-open" },
+        text: false
+    });
+    $( "#timeline-save" ).button({
+        icons: { primary:  "ui-icon-disk" },
+        text: false
+    });
+    $( "#timeline-render" ).button({
+        icons: { primary:  "ui-icon-video" },
+        text: false
+    });
+    $( "#timeline-trash" ).button({
+        icons: { primary:  "ui-icon-trash" },
+        text: false
+    });
+    $( "#timeline-zoomout" ).button({
+        icons: { primary:  "ui-icon-zoomout" },
+        text: false
+    });
+    $( "#timeline-zoomin" ).button({
+        icons: { primary:  "ui-icon-zoomin" },
+        text: false
+    });
+
+    $( "#library-image" ).button({
+        icons: { primary:  "ui-icon-image" },
+        text: false
+    }).click(function() {
+        mediaLibrary.toggleByType( MediaItem.Type.IMAGE );
+    });
+    $( "#library-video" ).button({
+        icons: { primary:  "ui-icon-video" },
+        text: false
+    }).click(function() {
+        mediaLibrary.toggleByType( MediaItem.Type.VIDEO );
+    });
+    $( "#library-test" ).button({
+        icons: { primary:  "ui-icon-script" },
+        text: false
+    });
+    $( "#library-toolbar").buttonset();
+
 }
 
 /*
@@ -229,5 +341,4 @@ var mediaLibrary;
 var mediaTimelineUI;
 
 // media items
-//var editTimelineMediaItem;
-//var currentMediaItem;
+var currentDraggedMediaItem;

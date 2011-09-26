@@ -155,18 +155,11 @@
             ,   cursor: 'move'
             });*/
 
-            $(".library-item").click(function() {
-                alert(this);                
-            });
-
-            $(".timeline-object").click(function() {
-                alert(this);            
-            });
-
             /*
              * Model initialization
              */
             initDataModel();
+            initUI();
         });
     </SCRIPT> 
  
@@ -212,11 +205,14 @@
                 <DIV class="ui-layout-west">
                 
                     <DIV class="ui-layout-center">
-                        <DIV class="ui-widget-header ui-corner-top">
-                        Library
-                        <!-- TODO add toggle button for image / videos / test source / audio?/  segments? ... -->
-                        <!-- TODO add + button to import files from local file system here, get thumbnail? -->
-                        <!-- TOOD add cut button to delete selected entries from the library -->
+                        <DIV class="ui-widget-header ui-corner-top" id="library-toolbar">
+                            Library
+                            <input type="checkbox" id="library-video" checked /><label for="library-video">Videos</label>
+                            <input type="checkbox" id="library-image" checked /><label for="library-image">Images</label>
+                            <!-- <input type="checkbox" id="library-test" /><label for="library-test">Images</label> -->
+                            <!-- TODO add toggle button for image / videos / test source / audio?/  segments? ... -->
+                            <!-- TODO add + button to import files from local file system here, get thumbnail? -->
+                            <!-- TOOD add cut button to delete selected entries from the library -->
                         </DIV>
                         <DIV class="ui-widget-content media-library-container">
                             <!-- TODO handle properties -->
@@ -298,17 +294,25 @@
                     <DIV class="ui-layout-south">
                         <DIV class="ui-widget-header ui-corner-top">
                         Timeline
+
+                        <button id="timeline-play">Play</button>
+
                         <!-- TODO add new timeline button, deletes all timeline objects -->
+                        <button id="timeline-new">New empty timeline</button>
                         <!-- TODO add load timeline (for v2) -->
+                        <button id="timeline-load">Load timeline</button>
                         <!-- TODO add save timeline (for v2) -->
-                        <!-- TODO add cut button, to delete the timeline objects (explode / fade out when deleted) -->
-                        <!-- TODO add play button, to see the current timeline object -->
+                        <button id="timeline-save">Save timeline</button>
                         <!-- TODO add save button, to render final video to a file -->
+                        <button id="timeline-render">Save final video</button>
+                        <!-- TODO add trash button, to delete the timeline objects (explode / fade out when deleted) -->
+                        <button id="timeline-trash">Delete timeline object</button>
                         <!-- TODO add some zoom in / zoom out buttons  -->
+                        <button id="timeline-zoomout">Zoom out</button>
+                        <button id="timeline-zoomin">Zoom in</button>
+
                         </DIV>
                         <div class="media-timeline-container ui-widget-content" width="100%" height="100%">
-                            <!-- TODO use jquery ui dropping to accept items from the library -->
-                            <!-- TODO use jquery ui sorting to reorder the elements in the timeline -->
                             <!-- TODO use jquery ui selecting to do things with several timeline objects like delete them -->
                             <!-- TODO use jquery ui resizing to zoom in / out elements ? -->
                         </DIV>
