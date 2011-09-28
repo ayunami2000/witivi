@@ -26,10 +26,13 @@ function MediaItem(filename) {
     this._thumbnail.getMediaItem = function() { return self; }
     this._thumbnail.setAttribute("src", this._thumbnailSource);
     this._thumbnail.setAttribute("width", "150px");
-    this._thumbnail.setAttribute("class", "media-library-item draggable ui-widget-content");
+    this._thumbnail.setAttribute("class",
+            "media-library-item draggable ui-widget-content");
 
     $(this._thumbnail).draggable({
-        //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
+        /* Use a helper-clone that is append to 'body'
+         * so is not 'contained' by a pane.
+         */
         helper: function (x) {
             var newhelper = $(this).clone();
             currentDraggedMediaItem = self;
@@ -161,8 +164,10 @@ function MediaTimelineUIItem(mediaItem) {
 
 MediaTimelineUIItem.prototype.getTimelineObject = function() {
     if (!this._timelineObject) {
-        this._timelineObject = new MediaTimelineFileSource(this._mediaItem.getURI());
+        this._timelineObject =
+                new MediaTimelineFileSource(this._mediaItem.getURI());
     }
+
     return this._timelineObject;
 }
 
@@ -171,7 +176,7 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
     var self = this;
     this._thumbnail.getMediaItem = function() { return self._mediaItem; }
     this._thumbnail.getMediaTimelineUIItem = function() { return self; }
-    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
+    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');
 
     $(this._thumbnail).bind('click', function() {
         previewMedia(this.getMediaTimelineUIItem());
@@ -181,7 +186,8 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
 MediaTimelineUIItem.prototype.getThumbnail= function() {
     if (!this._thumbnail) {
         this.setThumbnail(new Image());
-        this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
+        this._thumbnail.setAttribute("src",
+                this._mediaItem.getThumbnailSource());
    }
 
     return this._thumbnail;
@@ -222,25 +228,10 @@ function MediaTimelineUI(timeline) {
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
         mediaTimelineUI.updateMediaTimelineSorting();
     });
-    //$( ".media-timeline-container" ).bind( "sortremove", function(event, ui) {
-        //console.log("sortremove ui.position=" + ui.position + " offset="  + ui.offset);
-        //mediaTimelineUI.updateMediaTimelineSorting();
-    //});
 };
 
 MediaTimelineUI.prototype.getMediaTimeline = function() {
     return this._timeline;
-}
-
-MediaTimelineUI.prototype.addMediaItem = function(mediaItem) {
-    var item = new MediaTimelineUIItem(mediaItem);
-
-    // add timeline object to the timeline
-    var timelineObject = item.getTimelineObject();
-    this._timeline.addObject(item.getTimelineObject(), 0);
-
-    // make it appear in the UI too
-    $(".media-timeline-container").append( item.getThumbnail() );
 }
 
 MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
@@ -252,7 +243,8 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
                 var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
                 mtui.setThumbnail($(this).context);
                 // add to the timeline to proper position
-                mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+                mediaTimelineUI.getMediaTimeline().addObject(
+                        mtui.getTimelineObject(), index);
             }
         } else {
             //console.log("item was here before: " + index);
@@ -329,7 +321,8 @@ function initUI() {
         $(".media-timeline-container .ui-selected").each(function(index) {
 
             // Remove the Item from the MediaTimeline Object.
-            var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
+            var tlObject =
+                $(this).context.getMediaTimelineUIItem().getTimelineObject();
             mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
 
             // Remove the visual representation of the item.
