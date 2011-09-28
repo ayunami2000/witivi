@@ -70,7 +70,7 @@ function MediaItem(filename) {
             return newhelper.appendTo('body').css('zIndex',5).show();
         },
         stop : function (x) {
-            currentDraggedMediaItem = null;
+            currentDraggedMediaItem = false;
         },
         connectToSortable : '.media-timeline-container',
         cursor: 'move'
@@ -249,22 +249,13 @@ var MediaTimelineUI = function(timeline) {
 
     $( ".media-timeline-container" ).sortable({});
     $( ".media-timeline-container" ).disableSelection();
-    $( ".media-timeline-container" ).bind( "sortchange", function(event, ui) {
-        //console.log("sortchange");
-        mediaTimelineUI.updateMediaTimelineSorting();
-    });
-    $( ".media-timeline-container" ).bind( "sortreceive", function(event, ui) {
-        //console.log("sortreceive");
-        mediaTimelineUI.updateMediaTimelineSorting();
-    });
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
-        console.log("sortupdate ui.position=" + ui.position + " offset="  + ui.offset);
         mediaTimelineUI.updateMediaTimelineSorting();
     });
-    $( ".media-timeline-container" ).bind( "sortremove", function(event, ui) {
-        console.log("sortremove ui.position=" + ui.position + " offset="  + ui.offset);
-        mediaTimelineUI.updateMediaTimelineSorting();
-    });
+    //$( ".media-timeline-container" ).bind( "sortremove", function(event, ui) {
+        //console.log("sortremove ui.position=" + ui.position + " offset="  + ui.offset);
+        //mediaTimelineUI.updateMediaTimelineSorting();
+    //});
 };
 
 MediaTimelineUI.prototype.getMediaTimeline = function() {
@@ -287,10 +278,12 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
         // new element
         if (typeof($(this).context.getMediaItem) == "undefined") {
             console.log("new item found: " + index);
-            var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
-            mtui.setThumbnail($(this).context);
-            // add to the timeline to proper position
-            mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+            if (currentDraggedMediaItem) {
+                var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
+                mtui.setThumbnail($(this).context);
+                // add to the timeline to proper position
+                mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+            }
         } else {
             console.log("item was here before: " + index);
             var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
