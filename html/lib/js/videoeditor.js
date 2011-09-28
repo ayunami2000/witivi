@@ -1,9 +1,33 @@
+function nsecsToString(nsecs) {
+    var seconds = Math.floor(nsecs * 0.000000001);
+
+    var minutes = Math.floor(seconds/60);
+    seconds = seconds % 60;
+
+    var hours = Math.floor(minutes/60);
+    minutes = minutes % 60
+
+    return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+}
+
 function dumpObject(obj) {
   var output = '';
   for (property in obj) {
     output += property + ': ' + obj[property] + "\n";
   }
   console.log(output);
+}
+
+function fillMediaInfo(item) {
+   var properties = item.getProperties();
+   
+   var content = "<table>";
+   for (key in properties) {
+        content += "<tr><td><b>" + key + ":</b></td>";
+        content += "<td>" + properties[key] + "</td></tr>";
+   }
+   content += "</table>";
+   $('#ui-mediaitem-info').attr('innerHTML', content);
 }
 
 /*
@@ -14,14 +38,21 @@ function MediaItem(filename) {
     this._filename = filename;
     this._extension = this._filename.split(".").pop();
     this._thumbnailSource = this.getThumbnailSource();
+    this._properties = new Array();
 
-    // detect type
+    // detect type and fill the properties
     this._type = MediaItem.Type.UNKNOWN;
+    this._properties["Name"] = this.getBasename();
+    this._properties["Source"] = "Library";
     if (this._extension == "avi") {
         this._type |= MediaItem.Type.VIDEO;
+        this._properties["Type"] = "Video";
     } else if (this._extension == "jpg") {
         this._type |= MediaItem.Type.IMAGE;
+        this._properties["Type"] = "Image";
     }
+
+    // fill the properties
 
     // create thumbnail
     this._thumbnail = new Image();
@@ -47,6 +78,7 @@ function MediaItem(filename) {
 
     $(this._thumbnail).bind('click', function() {
         $('video').attr('src', filename);
+        fillMediaInfo(this.getMediaItem());
     });
 
     return this;
@@ -87,15 +119,7 @@ MediaItem.prototype.getThumbnail = function() {
 };
 
 MediaItem.prototype.getProperties = function() {
-    return {
-        "Source" : "Library",
-        "Type" : "Video",
-        "Duration" : "00:01:17",
-        "Start" : "00:00:00",
-        "Inpoint" : "00:00:00",
-        "Outpoint" : "00:10:00",
-        "Priority" : 1
-    };
+    return this._properties;
 }
 
 MediaItem.Type = {
@@ -155,6 +179,15 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
  */
 var MediaTimelineUIItem = function(mediaItem) {
     this._mediaItem = mediaItem;
+    this._properties = new Array();
+
+    // copy the properties from the media item
+    var itemProps = mediaItem.getProperties();
+    for (prop in itemProps) {
+        this._properties[prop] = itemProps[prop];
+    }
+
+    this._properties["Source"] = "Timeline";
 
     return this;
 }
@@ -175,28 +208,36 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
 
     $(this._thumbnail).bind('click', function() {
         $('video').attr('src', this.getMediaItem().getFilename());
+        // fill the timeline object properties before showing the media info
+        this.getMediaTimelineUIItem().fillTimelineObjectProperties();
+        fillMediaInfo(this.getMediaTimelineUIItem());
     });
 }
 
 MediaTimelineUIItem.prototype.getThumbnail= function() {
     if (!this._thumbnail) {
-        this._thumbnail = new Image();
-        var self = this;
-        this._thumbnail.getMediaItem = function() { return self._mediaItem; }
-        this._thumbnail.getMediaTimelineUIItem = function() { return self; }
+        this.setThumbnail(new Image());
         this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource() );
-        $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
-
-        $(this._thumbnail).bind('click', function() {
-            $('video').attr('src', this.getMediaItem().getFilename());
-        });
-    }
+   }
 
     return this._thumbnail;
 }
 
 MediaTimelineUIItem.prototype.getMediaItem= function() {
     return this._mediaItem;
+}
+
+MediaTimelineUIItem.prototype.getProperties = function() {
+    return this._properties;
+}
+
+MediaTimelineUIItem.prototype.fillTimelineObjectProperties = function() {
+    var object = this.getTimelineObject();
+
+    this._properties["Start"] = nsecsToString(object.start);
+    this._properties["Inpoint"] = nsecsToString(object.inpoint);
+    this._properties["Duration"] = nsecsToString(object.duration);
+    this._properties["Priority"] = "" + object.priority;
 }
 
 /*
