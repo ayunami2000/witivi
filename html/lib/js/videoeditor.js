@@ -218,7 +218,7 @@ function MediaTimelineUI(timeline) {
     this._properties["Type"] = "Video";
 
     $( ".media-timeline-container" ).sortable({});
-    $( ".media-timeline-container" ).disableSelection();
+    $( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
         mediaTimelineUI.updateMediaTimelineSorting();
     });
@@ -324,6 +324,17 @@ function initUI() {
     $( "#timeline-trash" ).button({
         icons: { primary:  "ui-icon-trash" },
         text: false
+    }).click(function () {
+        // Go through all selected items.
+        $(".media-timeline-container .ui-selected").each(function(index) {
+
+            // Remove the Item from the MediaTimeline Object.
+            var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
+            mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
+
+            // Remove the visual representation of the item.
+            $(this).remove();
+        });
     });
     $( "#timeline-zoomout" ).button({
         icons: { primary:  "ui-icon-zoomout" },

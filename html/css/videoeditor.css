@@ -366,4 +366,6 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .ui-layout-toggler-south-open   { background: transparent url(lib/img/toggle-dn.gif) no-repeat center top; }
 */
 
-.media-timeline-item { /*width: 150*/ }
+/* Define colors for selection */
+.media-timeline-container .ui-selecting { background: #BBB; }
+.media-timeline-container .ui-selected { background: #83c9d4; }
