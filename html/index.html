@@ -210,7 +210,7 @@
                             <input type="checkbox" id="library-video" checked /><label for="library-video">Videos</label>
                             <input type="checkbox" id="library-image" checked /><label for="library-image">Images</label>
                             <!-- <input type="checkbox" id="library-test" /><label for="library-test">Images</label> -->
-                            <!-- TODO add toggle button for image / videos / test source / audio?/  segments? ... -->
+                            <!-- TODO add toggle button for test source / audio?/  segments? ... -->
                             <!-- TODO add + button to import files from local file system here, get thumbnail? -->
                             <!-- TOOD add cut button to delete selected entries from the library -->
                         </DIV>
@@ -230,12 +230,14 @@
                 
                     <DIV class="ui-layout-center">
                         <DIV class="ui-widget-header ui-corner-top">Video Preview</DIV>
-                        <DIV class="ui-widget-content">
+                        <DIV class="ui-widget-content" align="center">
                             <!-- TODO handle image preview -->
                             <!-- TODO handle audio only playback? -->
                             <!-- TODO add jquery ui range-slider to set inpoint / outpoint -->
                             <!-- TOOD provide text input entry for input / outpoint -->
-                            <VIDEO SRC="media/source/20100818_006.mp4.avi" controls width=99% height=99%></VIDEO>
+                            <VIDEO ID="video-preview"controls width="99%" height="99%" hidden></VIDEO>
+                            <IMG ID="image-preview" height="100%" hidden></IMG> 
+                            <DIV ID="text-preview">Click on a video to play it</DIV>
                         </DIV>
                         <!--
                         <DIV class="ui-widget-footer ui-widget-header ui-corner-bottom">footer info</DIV>

@@ -77,7 +77,15 @@ function MediaItem(filename) {
     });
 
     $(this._thumbnail).bind('click', function() {
-        $('video').attr('src', filename);
+        if (self._type == MediaItem.Type.VIDEO) {
+            $('#text-preview').hide();
+            $('#video-preview').attr('src', filename).show();
+            $('#image-preview').hide();
+        } else if (self._type == MediaItem.Type.IMAGE) {
+            $('#text-preview').hide();
+            $('#video-preview').hide();
+            $('#image-preview').attr('src', filename).show();
+        }
         fillMediaInfo(this.getMediaItem());
     });
 
@@ -207,7 +215,15 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
     $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
 
     $(this._thumbnail).bind('click', function() {
-        $('video').attr('src', this.getMediaItem().getFilename());
+        if (this.getMediaItem()._type == MediaItem.Type.VIDEO) {
+            $('#text-preview').hide();
+            $('#video-preview').attr('src', this.getMediaItem().getFilename()).show();
+            $('#image-preview').hide();
+        } else if (this.getMediaItem()._type == MediaItem.Type.IMAGE) {
+            $('#text-preview').hide();
+            $('#video-preview').hide();
+            $('#image-preview').attr('src', this.getMediaItem().getFilename()).show();
+        }
         // fill the timeline object properties before showing the media info
         this.getMediaTimelineUIItem().fillTimelineObjectProperties();
         fillMediaInfo(this.getMediaTimelineUIItem());
@@ -313,7 +329,9 @@ function initUI() {
         icons: { primary:  "ui-icon-play" },
         text: false
     }).click(function () {
-        $('video').attr('src', "ges://foobar");
+        $('#text-preview').hide();
+        $('#video-preview').attr('src', "ges://foobar").show();
+        $('#image-preview').hide();
     });
     $( "#timeline-new" ).button({
         icons: { primary:  "ui-icon-document" },
