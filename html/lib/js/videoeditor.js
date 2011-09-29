@@ -325,6 +325,8 @@ function initUI() {
                 $(this).context.getMediaTimelineUIItem().getTimelineObject();
             mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
 
+            refreshMediaInfo(currentPreviewItem);
+
             // Remove the visual representation of the item.
             $(this).remove();
         });
