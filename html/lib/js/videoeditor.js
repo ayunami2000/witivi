@@ -1,35 +1,3 @@
-function nsecsToString(nsecs) {
-    var seconds = Math.floor(nsecs * 0.000000001);
-
-    var minutes = Math.floor(seconds/60);
-    seconds = seconds % 60;
-
-    var hours = Math.floor(minutes/60);
-    minutes = minutes % 60
-
-    return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-}
-
-function dumpObject(obj) {
-  var output = '';
-  for (property in obj) {
-    output += property + ': ' + obj[property] + "\n";
-  }
-  console.log(output);
-}
-
-function fillMediaInfo(item) {
-   var properties = item.getProperties();
-   
-   var content = "<table>";
-   for (key in properties) {
-        content += "<tr><td><b>" + key + ":</b></td>";
-        content += "<td>" + properties[key] + "</td></tr>";
-   }
-   content += "</table>";
-   $('#ui-mediaitem-info').attr('innerHTML', content);
-}
-
 /*
  * Media Item class
  */
@@ -51,8 +19,6 @@ function MediaItem(filename) {
         this._type |= MediaItem.Type.IMAGE;
         this._properties["Type"] = "Image";
     }
-
-    // fill the properties
 
     // create thumbnail
     this._thumbnail = new Image();
@@ -77,16 +43,7 @@ function MediaItem(filename) {
     });
 
     $(this._thumbnail).bind('click', function() {
-        if (self._type == MediaItem.Type.VIDEO) {
-            $('#text-preview').hide();
-            $('#video-preview').attr('src', filename).show();
-            $('#image-preview').hide();
-        } else if (self._type == MediaItem.Type.IMAGE) {
-            $('#text-preview').hide();
-            $('#video-preview').hide();
-            $('#image-preview').attr('src', filename).show();
-        }
-        fillMediaInfo(this.getMediaItem());
+        previewMedia(self);
     });
 
     return this;
@@ -128,6 +85,10 @@ MediaItem.prototype.getThumbnail = function() {
 
 MediaItem.prototype.getProperties = function() {
     return this._properties;
+}
+
+MediaItem.prototype.fillProperties = function() {
+    // nothing to do, already done :)
 }
 
 MediaItem.Type = {
@@ -185,7 +146,7 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
 /*
  * Media Timeline UI Item
  */
-var MediaTimelineUIItem = function(mediaItem) {
+function MediaTimelineUIItem(mediaItem) {
     this._mediaItem = mediaItem;
     this._properties = new Array();
 
@@ -195,7 +156,7 @@ var MediaTimelineUIItem = function(mediaItem) {
         this._properties[prop] = itemProps[prop];
     }
 
-    this._properties["Source"] = "Timeline";
+    this._properties["Source"] = "Clip";
 
     return this;
 }
@@ -215,18 +176,7 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
     $(this._thumbnail).addClass('media-timeline-item ui-widget-content');//.attr('width', '150px').css({'width':'150px'});
 
     $(this._thumbnail).bind('click', function() {
-        if (this.getMediaItem()._type == MediaItem.Type.VIDEO) {
-            $('#text-preview').hide();
-            $('#video-preview').attr('src', this.getMediaItem().getFilename()).show();
-            $('#image-preview').hide();
-        } else if (this.getMediaItem()._type == MediaItem.Type.IMAGE) {
-            $('#text-preview').hide();
-            $('#video-preview').hide();
-            $('#image-preview').attr('src', this.getMediaItem().getFilename()).show();
-        }
-        // fill the timeline object properties before showing the media info
-        this.getMediaTimelineUIItem().fillTimelineObjectProperties();
-        fillMediaInfo(this.getMediaTimelineUIItem());
+        previewMedia(this.getMediaTimelineUIItem());
     });
 }
 
@@ -247,7 +197,7 @@ MediaTimelineUIItem.prototype.getProperties = function() {
     return this._properties;
 }
 
-MediaTimelineUIItem.prototype.fillTimelineObjectProperties = function() {
+MediaTimelineUIItem.prototype.fillProperties = function() {
     var object = this.getTimelineObject();
 
     this._properties["Start"] = nsecsToString(object.start);
@@ -260,8 +210,12 @@ MediaTimelineUIItem.prototype.fillTimelineObjectProperties = function() {
  * Media Timeline UI
  */
 
-var MediaTimelineUI = function(timeline) {
+function MediaTimelineUI(timeline) {
     this._timeline = timeline;
+    this._properties = new Array();
+
+    this._properties["Source"] = "Timeline";
+    this._properties["Type"] = "Video";
 
     $( ".media-timeline-container" ).sortable({});
     $( ".media-timeline-container" ).disableSelection();
@@ -311,10 +265,30 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     });
 
     // TODO check for removals
+
+    // leave a timeout, since it the timeline might take some time to update some properties
+    setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
 };
 
+MediaTimelineUI.prototype.fillProperties = function() {
+    var tl = this._timeline;
+
+    this._properties["Clips"] = tl.numObjects();
+    var duration = 0;
+    for(var index = 0;index < tl.numObjects();index++) {
+        if (tl.at(index).duration >= 0 && tl.at(index).duration < 18446744073709552000) {
+            duration += parseFloat(tl.at(index).duration);
+        }
+    }
+    this._properties["Duration"] = nsecsToString(duration);
+}
+
+MediaTimelineUI.prototype.getProperties = function() {
+    return this._properties;
+}
+
 /*
- * Data model
+ * Misc functions
  */
 
 function initDataModel() {
@@ -329,9 +303,7 @@ function initUI() {
         icons: { primary:  "ui-icon-play" },
         text: false
     }).click(function () {
-        $('#text-preview').hide();
-        $('#video-preview').attr('src', "ges://foobar").show();
-        $('#image-preview').hide();
+        previewMedia(mediaTimelineUI);
     });
     $( "#timeline-new" ).button({
         icons: { primary:  "ui-icon-document" },
@@ -382,6 +354,87 @@ function initUI() {
 
 }
 
+function fillMediaInfo(item) {
+   var properties = item.getProperties();
+
+   var content = "<table>";
+   for (key in properties) {
+        content += "<tr><td><b>" + key + ":</b></td>";
+        content += "<td>" + properties[key] + "</td></tr>";
+   }
+   content += "</table>";
+   $('#ui-mediaitem-info').attr('innerHTML', content);
+}
+
+function nsecsToString(nsecs) {
+    if (nsecs < 0 || nsecs >= 18446744073709552000) {
+        nsecs = 0;
+    }
+
+    var seconds = Math.floor(nsecs * 0.000000001);
+
+    var minutes = Math.floor(seconds/60);
+    seconds = seconds % 60;
+
+    var hours = Math.floor(minutes/60);
+    minutes = minutes % 60
+
+    return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+}
+
+function dumpObject(obj) {
+    var output = '';
+    for (property in obj) {
+        output += property + ': ' + obj[property] + "\n";
+    }
+    console.log(output);
+}
+
+function updateProperties(stuff, checkCurrent) {
+
+}
+
+function previewMedia(stuff) {
+    currentPreviewItem = stuff;
+
+    // extract data depending on the stuff
+    var type = MediaItem.Type.UNKNOWN;
+    var src;
+
+    if (currentPreviewItem.constructor.name == "MediaItem") {
+        type = currentPreviewItem._type;
+        src = currentPreviewItem.getFilename();
+    } else if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
+        type = currentPreviewItem.getMediaItem()._type;
+        src = currentPreviewItem.getMediaItem().getFilename();
+    } else if (currentPreviewItem.constructor.name == "MediaTimelineUI") {
+        type = MediaItem.Type.VIDEO;
+        src = "ges://foobar";
+    }
+
+    // fill the media info pane with current preview item information
+    currentPreviewItem.fillProperties();
+    fillMediaInfo(currentPreviewItem);
+
+    // enable the proper viewer depending on the media type
+    if (type == MediaItem.Type.VIDEO) {
+        $('#text-preview').hide();
+        $('#video-preview').attr('src', src).show();
+        $('#image-preview').hide();
+    } else if (type == MediaItem.Type.IMAGE) {
+        $('#text-preview').hide();
+        $('#video-preview').hide();
+        $('#image-preview').attr('src', src).show();
+    }
+}
+
+function refreshMediaInfo(obj) {
+    if (currentPreviewItem == obj) {
+        obj.fillProperties();
+        fillMediaInfo(currentPreviewItem);
+    }
+}
+
 /*
  * Data model
  */
@@ -394,3 +447,6 @@ var mediaTimelineUI;
 
 // media items
 var currentDraggedMediaItem;
+
+// current preview item
+var currentPreviewItem;
