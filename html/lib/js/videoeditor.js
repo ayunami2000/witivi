@@ -110,7 +110,6 @@ var MediaLibrary = function() {
 
 MediaLibrary.prototype.toggleByType = function(type) {
     for (var item in this._mediaItems) {
-        console.log(this._mediaItems[item].getType());
         if (this._mediaItems[item].getType() & type) {
             $(this._mediaItems[item].getThumbnail()).toggle();
         }
@@ -119,7 +118,6 @@ MediaLibrary.prototype.toggleByType = function(type) {
 
 MediaLibrary.prototype.showByType = function(type) {
     for (var item in this._mediaItems) {
-        console.log(this._mediaItems[item].getType());
         if (this._mediaItems[item].getType() & type) {
             $(this._mediaItems[item].getThumbnail()).show();
         }
@@ -128,7 +126,6 @@ MediaLibrary.prototype.showByType = function(type) {
 
 MediaLibrary.prototype.hideByType = function(type) {
     for (var item in this._mediaItems) {
-        console.log(this._mediaItems[item].getType());
         if (this._mediaItems[item].getType() & type) {
             $(this._mediaItems[item].getThumbnail()).hide();
         }
@@ -149,6 +146,7 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
 function MediaTimelineUIItem(mediaItem) {
     this._mediaItem = mediaItem;
     this._properties = new Array();
+    this._type = MediaItem.Type.VIDEO;
 
     // copy the properties from the media item
     var itemProps = mediaItem.getProperties();
@@ -202,7 +200,8 @@ MediaTimelineUIItem.prototype.fillProperties = function() {
 
     this._properties["Start"] = nsecsToString(object.start);
     this._properties["Inpoint"] = nsecsToString(object.inpoint);
-    this._properties["Duration"] = nsecsToString(object.duration);
+    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration);
+    this._properties["Clip Duration"] = nsecsToString(object.duration);
     this._properties["Priority"] = "" + object.priority;
 }
 
@@ -213,6 +212,7 @@ MediaTimelineUIItem.prototype.fillProperties = function() {
 function MediaTimelineUI(timeline) {
     this._timeline = timeline;
     this._properties = new Array();
+    this._type = MediaItem.Type.VIDEO;
 
     this._properties["Source"] = "Timeline";
     this._properties["Type"] = "Video";
@@ -247,7 +247,7 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     $(".media-timeline-container img").each(function(index) {
         // new element
         if (typeof($(this).context.getMediaItem) == "undefined") {
-            console.log("new item found: " + index);
+            //console.log("new item found: " + index);
             if (currentDraggedMediaItem) {
                 var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
                 mtui.setThumbnail($(this).context);
@@ -255,10 +255,10 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
                 mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
             }
         } else {
-            console.log("item was here before: " + index);
+            //console.log("item was here before: " + index);
             var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
             if (mediaTimelineUI.getMediaTimeline().index(tlObject) != index) {
-                console.log("item has changed position " + mediaTimelineUI.getMediaTimeline().index(tlObject) + " to " + index);
+                //console.log("item has changed position " + mediaTimelineUI.getMediaTimeline().index(tlObject) + " to " + index);
                 mediaTimelineUI.getMediaTimeline().moveObject(tlObject, index);
             }
         }
@@ -352,6 +352,8 @@ function initUI() {
     });
     $( "#library-toolbar").buttonset();
 
+    var video = document.getElementById('video-preview');
+    video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
 }
 
 function fillMediaInfo(item) {
@@ -390,10 +392,6 @@ function dumpObject(obj) {
     console.log(output);
 }
 
-function updateProperties(stuff, checkCurrent) {
-
-}
-
 function previewMedia(stuff) {
     currentPreviewItem = stuff;
 
@@ -412,10 +410,6 @@ function previewMedia(stuff) {
         src = "ges://foobar";
     }
 
-    // fill the media info pane with current preview item information
-    currentPreviewItem.fillProperties();
-    fillMediaInfo(currentPreviewItem);
-
     // enable the proper viewer depending on the media type
     if (type == MediaItem.Type.VIDEO) {
         $('#text-preview').hide();
@@ -426,6 +420,10 @@ function previewMedia(stuff) {
         $('#video-preview').hide();
         $('#image-preview').attr('src', src).show();
     }
+
+    // fill the media info pane with current preview item information
+    currentPreviewItem.fillProperties();
+    fillMediaInfo(currentPreviewItem);
 }
 
 function refreshMediaInfo(obj) {
@@ -433,6 +431,63 @@ function refreshMediaInfo(obj) {
         obj.fillProperties();
         fillMediaInfo(currentPreviewItem);
     }
+}
+
+function videoMetadataUpdated() {
+    var video = document.getElementById('video-preview');
+    if (video && currentPreviewItem._type == MediaItem.Type.VIDEO) {
+        if (video.videoWidth > 0) {
+            currentPreviewItem._properties["Width"] = video.videoWidth;
+        }
+        if (video.videoHeight > 0) {
+            currentPreviewItem._properties["Height"] = video.videoHeight;
+        }
+        if (video.duration > 0) {
+            currentPreviewItem._properties["Duration"] = nsecsToString(video.duration * 1e9);
+        }
+    }
+
+    /*
+    // some debug info
+    if (video) {
+        currentPreviewItem._properties['error'] = video.error;
+        currentPreviewItem._properties['networkState'] = video.networkState;
+        currentPreviewItem._properties['preload'] = video.preload;
+        currentPreviewItem._properties['buffered'] = video.buffered;
+        currentPreviewItem._properties['readyState'] = video.readyState;
+        currentPreviewItem._properties['seeking'] = video.seeking;
+        currentPreviewItem._properties['currentTime'] = video.currentTime;
+        currentPreviewItem._properties['initialTime'] = video.initialTime;
+        currentPreviewItem._properties['duration'] = video.duration;
+        currentPreviewItem._properties['startOffsetTime'] = video.startOffsetTime;
+        currentPreviewItem._properties['paused'] = video.paused;
+        currentPreviewItem._properties['defaultPlaybackRate'] = video.defaultPlaybackRate;
+        currentPreviewItem._properties['playbackRate'] = video.playbackRate;
+        currentPreviewItem._properties['played'] = video.played;
+        currentPreviewItem._properties['seekable'] = video.seekable;
+        currentPreviewItem._properties['ended'] = video.ended;
+        currentPreviewItem._properties['autoplay'] = video.autoplay;
+        currentPreviewItem._properties['loop'] = video.loop;
+        currentPreviewItem._properties['mediaGroup'] = video.mediaGroup;
+        setTimeout(refreshCurrentMediaInfo, 200);
+    }
+    */
+
+    refreshMediaInfo(currentPreviewItem);
+}
+
+function imageMetadataUpdated() {
+    var image = document.getElementById('image-preview');
+    if (image && currentPreviewItem._type == MediaItem.Type.IMAGE) {
+        if (image.naturalWidth > 0) {
+            currentPreviewItem._properties["Width"] = image.naturalWidth;
+        }
+        if (image.naturalHeight > 0) {
+            currentPreviewItem._properties["Height"] = image.naturalHeight;
+        }
+    }
+
+    refreshMediaInfo(currentPreviewItem);
 }
 
 /*
