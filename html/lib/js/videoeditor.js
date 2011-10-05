@@ -207,7 +207,7 @@ MediaTimelineUIItem.prototype.fillProperties = function() {
     this._properties["Start"] = nsecsToString(object.start);
     this._properties["Inpoint"] = nsecsToString(object.inpoint);
     this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration);
-    this._properties["Clip Duration"] = nsecsToString(object.duration);
+    this._properties["Duration"] = nsecsToString(object.duration);
     this._properties["Priority"] = "" + object.priority;
 }
 
@@ -272,7 +272,7 @@ MediaTimelineUI.prototype.fillProperties = function() {
             duration += parseFloat(tl.at(index).duration);
         }
     }
-    this._properties["Duration"] = nsecsToString(duration);
+    this._properties["Length"] = nsecsToString(duration);
 }
 
 MediaTimelineUI.prototype.getProperties = function() {
@@ -358,8 +358,58 @@ function initUI() {
     });
     $( "#library-toolbar").buttonset();
 
+    $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: 0,
+        values: [0, 0],
+        step: 1000 / fps,
+        slide: updateInOutpoints,
+        stop: rangeSliderStop,
+        disabled: true
+    });
+
     var video = document.getElementById('video-preview');
     video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
+}
+
+function updateInOutpoints(event, ui){
+
+    // only check for timeline objects case
+    if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
+        // seek
+        var video = document.getElementById('video-preview');
+        if (video) {
+            video.currentTime = ui.value / 1000.0;
+        }
+
+        var object = currentPreviewItem.getTimelineObject();
+        if (object) {
+            var values = $('#slider-range').slider( "option", "values");
+            var inpoint = document.getElementById('valueInpoint');
+            if (inpoint && values) {
+                object.inpoint = values[0] * 1e6;
+                inpoint.innerText = nsecsToString(object.inpoint);
+            }
+
+            var outpoint = document.getElementById('valueOutpoint');
+            var clipDuration = document.getElementById('valueDuration');
+            if (outpoint && clipDuration && values) {
+                object.duration = values[1] * 1e6 - object.inpoint;
+                outpoint.innerText = nsecsToString(object.inpoint + object.duration);
+                clipDuration.innerText = nsecsToString(object.duration);
+            }
+        }
+    }
+}
+
+function rangeSliderStop(event, ui) {
+    if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
+        var video = document.getElementById('video-preview');
+        if (video) {
+            video.currentTime = ui.value / 1000.0;
+        }
+    }
 }
 
 function fillMediaInfo(item) {
@@ -368,10 +418,14 @@ function fillMediaInfo(item) {
    var content = "<table>";
    for (key in properties) {
         content += "<tr><td><b>" + key + ":</b></td>";
-        content += "<td>" + properties[key] + "</td></tr>";
+        content += "<td id='value" + key + "'>" + properties[key] + "</td></tr>";
    }
    content += "</table>";
    $('#ui-mediaitem-info').attr('innerHTML', content);
+}
+
+function secsToString(secs) {
+    return nsecsToString(1e9 * secs);
 }
 
 function nsecsToString(nsecs) {
@@ -379,7 +433,8 @@ function nsecsToString(nsecs) {
         nsecs = 0;
     }
 
-    var seconds = Math.floor(nsecs * 0.000000001);
+    var seconds = Math.floor(nsecs / 1e9);
+    var mseconds = Math.round((nsecs / 1e6) % 1e3);
 
     var minutes = Math.floor(seconds/60);
     seconds = seconds % 60;
@@ -387,7 +442,16 @@ function nsecsToString(nsecs) {
     var hours = Math.floor(minutes/60);
     minutes = minutes % 60
 
-    return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    var text = (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    // missing sprintf :P
+    if (mseconds >= 100) {
+        text = text + "." + mseconds;
+    } else if (mseconds >= 10) {
+        text = text + ".0" + mseconds;
+    } else if (mseconds > 10) {
+        text = text + ".00" + mseconds;
+    }
+    return text;
 }
 
 function dumpObject(obj) {
@@ -430,6 +494,27 @@ function previewMedia(stuff) {
     // fill the media info pane with current preview item information
     currentPreviewItem.fillProperties();
     fillMediaInfo(currentPreviewItem);
+
+    // setup the inpoint / outpoint slider
+    if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
+        $('#slider-range').slider( "option", "disabled", false );
+        var object = currentPreviewItem.getTimelineObject();
+        var min = 0;
+        var max = 0;
+        if (currentPreviewItem.duration) {
+            max = currentPreviewItem.duration * 1e3;
+        } else if (object) {
+            // fallback in case we don't have metadata info yet (get metadata async)
+            max = object.duration / 1e6;
+        }
+        var inpoint = object.inpoint / 1e6;
+        var outpoint = (object.inpoint + object.duration) / 1e6;
+        $('#slider-range').slider( "option", "min", min);
+        $('#slider-range').slider( "option", "max", max);
+        $('#slider-range').slider( "option", "values", [inpoint, outpoint] );
+    } else {
+        $('#slider-range').slider( "option", "disabled", true );
+    }
 }
 
 function refreshMediaInfo(obj) {
@@ -449,7 +534,8 @@ function videoMetadataUpdated() {
             currentPreviewItem._properties["Height"] = video.videoHeight;
         }
         if (video.duration > 0) {
-            currentPreviewItem._properties["Duration"] = nsecsToString(video.duration * 1e9);
+            currentPreviewItem.duration = video.duration;
+            currentPreviewItem._properties["Length"] = nsecsToString(video.duration * 1e9);
         }
     }
 
@@ -511,3 +597,6 @@ var currentDraggedMediaItem;
 
 // current preview item
 var currentPreviewItem;
+
+// set some reference value for FPS (needed for time in/out editing)
+var fps = 25;
