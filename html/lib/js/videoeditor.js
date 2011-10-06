@@ -256,9 +256,9 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
         }
     });
 
-    // TODO check for removals
+    $('#text-preview-timeline').hide();
 
-    // leave a timeout, since it the timeline might take some time to update some properties
+    // use a timeout, since the timeline might take some time to update some properties
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
 };
 
@@ -319,16 +319,21 @@ function initUI() {
     }).click(function () {
         // Go through all selected items.
         $(".media-timeline-container .ui-selected").each(function(index) {
-
             // Remove the Item from the MediaTimeline Object.
             var tlObject =
                 $(this).context.getMediaTimelineUIItem().getTimelineObject();
-            mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
+            if (tlObject) {
+                mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
+            }
 
             refreshMediaInfo(currentPreviewItem);
 
             // Remove the visual representation of the item.
             $(this).remove();
+
+            if (mediaTimelineUI.getMediaTimeline().numObjects() <= 0) {
+                $('#text-preview-timeline').show();
+            }
         });
     });
     $( "#timeline-zoomout" ).button({
@@ -518,7 +523,7 @@ function previewMedia(stuff) {
 }
 
 function refreshMediaInfo(obj) {
-    if (currentPreviewItem == obj) {
+    if (currentPreviewItem && currentPreviewItem == obj) {
         obj.fillProperties();
         fillMediaInfo(currentPreviewItem);
     }
