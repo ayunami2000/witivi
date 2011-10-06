@@ -208,7 +208,7 @@ MediaTimelineUIItem.prototype.fillProperties = function() {
     this._properties["Inpoint"] = nsecsToString(object.inpoint);
     this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration);
     this._properties["Duration"] = nsecsToString(object.duration);
-    this._properties["Priority"] = "" + object.priority;
+    //this._properties["Priority"] = "" + object.priority;
 }
 
 /*
