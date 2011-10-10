@@ -265,6 +265,7 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
 
     // use a timeout, since the timeline might take some time to update some properties
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
+    setTimeout("updateTimelineLength();", 100);
 };
 
 MediaTimelineUI.prototype.fillProperties = function() {
@@ -332,6 +333,7 @@ function initUI() {
             }
 
             refreshMediaInfo(currentPreviewItem);
+            updateTimelineLength();
 
             // Remove the visual representation of the item.
             $(this).remove();
@@ -409,6 +411,8 @@ function updateInOutpoints(event, ui){
                 outpoint.innerText = nsecsToString(object.inpoint + object.duration);
                 clipDuration.innerText = nsecsToString(object.duration);
             }
+
+            updateTimelineLength();
         }
     }
 }
@@ -594,6 +598,20 @@ function imageMetadataUpdated() {
     }
 
     refreshMediaInfo(currentPreviewItem);
+}
+
+function updateTimelineLength() {
+    var info = document.getElementById('timeline-length');
+    if (info) {
+        var tl = mediaTimelineUI.getMediaTimeline();
+        var duration = 0;
+        for(var index = 0;index < tl.numObjects();index++) {
+            if (tl.at(index).duration >= 0 && tl.at(index).duration < 18446744073709552000) {
+                duration += parseFloat(tl.at(index).duration);
+            }
+        }
+        info.innerText = nsecsToString(duration);
+    }
 }
 
 /*
