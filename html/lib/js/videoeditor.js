@@ -242,6 +242,11 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
             if (currentDraggedMediaItem) {
                 var mtui = new MediaTimelineUIItem(currentDraggedMediaItem);
                 mtui.setThumbnail($(this).context);
+                if (currentDraggedMediaItem._type == MediaItem.Type.IMAGE) {
+                    var tlObject = mtui.getTimelineObject();
+                    tlObject.inpoint = 0;
+                    tlObject.duration = 3e9;
+                }
                 // add to the timeline to proper position
                 mediaTimelineUI.getMediaTimeline().addObject(
                         mtui.getTimelineObject(), index);
@@ -506,11 +511,15 @@ function previewMedia(stuff) {
         var object = currentPreviewItem.getTimelineObject();
         var min = 0;
         var max = 0;
-        if (currentPreviewItem.duration) {
-            max = currentPreviewItem.duration * 1e3;
-        } else if (object) {
-            // fallback in case we don't have metadata info yet (get metadata async)
-            max = object.duration / 1e6;
+        if (currentPreviewItem._mediaItem._type == MediaItem.Type.IMAGE) {
+            max = 20e3;
+        } else {
+            if (currentPreviewItem.duration) {
+                max = currentPreviewItem.duration * 1e3;
+            } else if (object) {
+                // fallback in case we don't have metadata info yet (get metadata async)
+                max = object.duration / 1e6;
+            }
         }
         var inpoint = object.inpoint / 1e6;
         var outpoint = (object.inpoint + object.duration) / 1e6;
