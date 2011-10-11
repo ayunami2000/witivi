@@ -223,7 +223,14 @@ function MediaTimelineUI(timeline) {
     this._properties["Source"] = "Timeline";
     this._properties["Type"] = "Video";
 
-    $( ".media-timeline-container" ).sortable({});
+    $( ".media-timeline-container" ).sortable({ 
+        //placeholder: 'ui-state-highlight',
+        //forcePlaceholderSize: true,
+        tolerance: "pointer",
+        distance: 30,
+        delay: 100,
+        opacity: 0.7
+    });
     $( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
         mediaTimelineUI.updateMediaTimelineSorting();
