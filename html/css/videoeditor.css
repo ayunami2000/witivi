@@ -7,7 +7,7 @@ body {
     color:          #FFF;
     font-family:    Verdana, Arial, Helvetica, sans-serif;
     font-size:      14px;
-    padding:        0 20px !important; /* override Layout default of '0' */
+    padding:        0 0.5em !important; /* override Layout default of '0' */
     margin:         0;
     /* set min dimensions for layout - window will scroll if smaller than this */
     min-width:      800px;
@@ -120,7 +120,7 @@ H4 { margin: 1em 0 1ex; font-size: 1.1em; }
     */
 #outer-north {
     font-weight:    bold;
-    padding:        1em 1em;
+    padding:        0.2em 0.2em;
     }
     #outer-north div.buttons {
         float:          right;
@@ -128,7 +128,7 @@ H4 { margin: 1em 0 1ex; font-size: 1.1em; }
         margin-top:     -4px;
         }
 #outer-south {
-    padding:        .5em 1em;
+    padding:        .2em 0.2em;
 }
 
 /*
