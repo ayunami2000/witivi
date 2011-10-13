@@ -303,6 +303,11 @@ function initDataModel() {
     mediaLibrary = new MediaLibrary();
     mediaLibrary.addMediaFiles(mediaFiles);
 
+    if (typeof MediaTimeline == "undefined") {
+        $('#text-preview-timeline').attr('innerHTML', "<br><br>ERROR: your browser does not support GES Webkit extension");
+        return;
+    }
+
     mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
 }
 
