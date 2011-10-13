@@ -15,3 +15,4 @@ jqueryuithemedir = $(pkgdatadir)/lib/js/jquery.ui/themes/base
 jqueryuithemeimages_DATA = lib/js/jquery.ui/themes/base/images/*.png
 jqueryuithemeimagesdir = $(pkgdatadir)/lib/js/jquery.ui/themes/base/images
 
+EXTRA_DIST = *.html css images lib 
