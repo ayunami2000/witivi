@@ -224,12 +224,13 @@ function MediaTimelineUI(timeline) {
     this._properties["Type"] = "Video";
 
     $( ".media-timeline-container" ).sortable({ 
-        //placeholder: 'ui-state-highlight',
-        //forcePlaceholderSize: true,
+        placeholder: 'ui-state-highlight',
+        forcePlaceholderSize: true,
         tolerance: "pointer",
         distance: 30,
         delay: 100,
-        opacity: 0.7
+        opacity: 0.7,
+        start: sortableStartEvent
     });
     $( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
@@ -618,6 +619,12 @@ function updateTimelineLength() {
             }
         }
         info.innerText = nsecsToString(duration);
+    }
+}
+
+function sortableStartEvent(event, ui) {
+    if (ui.placeholder) {
+        ui.placeholder.attr("src", "images/placeholder.png")
     }
 }
 
