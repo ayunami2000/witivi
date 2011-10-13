@@ -1,1 +1,1 @@
-SUBDIRS = bin html
+SUBDIRS = bin html data

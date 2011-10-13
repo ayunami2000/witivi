@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Witivi Video Editor
+Comment=Create and edit your own movies
+Exec=witivi
+Terminal=false
+Type=Application
+Icon=witivi
+Categories=GNOME;GTK;AudioVideo;AudioVideoEditing;
+StartupNotify=true

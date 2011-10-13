@@ -15,10 +15,10 @@ AC_PROG_INSTALL
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CONFIG_FILES([
-    Makefile
-    bin/Makefile
-    html/Makefile
-])
 
-AC_OUTPUT
+AC_OUTPUT(
+Makefile
+bin/Makefile
+html/Makefile
+data/Makefile
+)
