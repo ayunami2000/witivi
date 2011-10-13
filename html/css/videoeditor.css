@@ -139,7 +139,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .custom #outer-north ,
 .custom #outer-center ,
 .custom #outer-south {
-    background:     #776;
+    background:     #3e3d39;
 }
 /* Tabs Wrapper & Buttons*/
 #outer-center.ui-tabs ,
