@@ -1,0 +1,16 @@
+#!/bin/bash
+BROWSER=`which epiphany-browser 2> /dev/null`
+if [ $? -ne 0 ]; then
+  BROWSER=`which epiphany 2> /dev/null`
+  if [ $? -ne 0 ]; then
+    echo Epiphany browser not found; exit
+  fi;
+fi
+echo Epiphany browser found: $BROWSER
+
+# autodetect html path 
+WITIVIBIN=`dirname $0`
+WITIVIPREFIX=`dirname $WITIVIBIN`
+WITIVIDATA=$WITIVIPREFIX/share/witivi
+
+$BROWSER "file://$WITIVIDATA/launcher.html"
