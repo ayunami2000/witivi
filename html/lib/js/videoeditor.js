@@ -42,7 +42,9 @@ function MediaItem(filename) {
             currentDraggedMediaItem = false;
         },
         connectToSortable : '.media-timeline-container',
-        cursor: 'move'
+        cursor: 'move',
+        distance: 30,
+        opacity: 0.7
     });
 
     $(this._thumbnail).bind('click', function() {
