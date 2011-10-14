@@ -3507,6 +3507,7 @@ debugData( test, pane );
 		if (!$T) return;
 		o.closable = true;
 		$T	.bind("click."+ sID, function(evt){ evt.stopPropagation(); toggle(pane); })
+			.bind("mousedown." + sID, function(evt){ evt.stopPropagation(); toggle(pane); })
 			.bind("mouseenter."+ sID, addHover)
 			.bind("mouseleave."+ sID, removeHover)
 			.css("visibility", "visible")
