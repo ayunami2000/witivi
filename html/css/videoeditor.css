@@ -210,8 +210,10 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     *  Can't pad #tabpanels .tab-panel containers because have width/height = 100%
     *  so must pad outer-edges of inner-panes instead to get nice whitespace
 */
-.tab-panel .ui-layout-west { padding-left:  10px; } /* same as west__spacing_closed */
-.tab-panel .ui-layout-east { padding-right: 10px; } /* same as east__spacing_closed */
+.tab-panel .ui-layout-west { padding-left:  20px; } /* same as west__spacing_closed */
+.tab-panel .ui-layout-east { padding-right: 20px; } /* same as east__spacing_closed */
+.tab-panel .ui-layout-south { padding-right: 20px; } /* same as east__spacing_closed */
+
 /*  
     *  Every inner-layout is made up of header, content and footer panels
     */
@@ -327,9 +329,9 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 }
 .ui-layout-toggler .ui-icon         { margin:       0 auto; } /* default - center horizontally */
 .ui-layout-toggler-north .ui-icon ,
-.ui-layout-toggler-south .ui-icon   { margin-top:   -3px; } /* tweak arrow vertical-center */
+.ui-layout-toggler-south .ui-icon   { margin-top:   1px; } /* tweak arrow vertical-center */
 .ui-layout-toggler-west .ui-icon ,
-.ui-layout-toggler-east .ui-icon    { margin-left:  -3px; } /* tweak arrow horizontal-center */
+.ui-layout-toggler-east .ui-icon    { margin-left:  1px; } /* tweak arrow horizontal-center */
 /* assign arrows for each side & state */
 .ui-layout-toggler-north-closed .ui-icon, 
 .ui-layout-toggler-south-open .ui-icon {
@@ -420,3 +422,5 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
 }
+
+.ui-buttonset { margin-right: 0px; }
