@@ -12,7 +12,9 @@ function MediaItem(filename) {
     this._type = MediaItem.Type.UNKNOWN;
     this._properties["Name"] = this.getBasename();
     this._properties["Source"] = "Library";
-    if (this._extension == "avi") {
+    if (this._extension == "avi"
+        || this._extension == "mp4"
+        || this._extension == "ogg") {
         this._type |= MediaItem.Type.VIDEO;
         this._properties["Type"] = "Video";
     } else if (this._extension == "jpg") {
