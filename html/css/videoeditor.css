@@ -424,3 +424,13 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 }
 
 .ui-buttonset { margin-right: 0px; }
+
+#video-preview {
+    overflow: hidden !important;
+    margin: -5px;
+}
+
+#image-preview {
+    overflow: hidden !important;
+    margin: -5px;
+}
