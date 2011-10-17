@@ -435,6 +435,7 @@ function updateInOutpoints(event, ui){
 }
 
 function rangeSliderStop(event, ui) {
+    updateInOutpoints(event, ui);
     if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
         var video = document.getElementById('video-preview');
         if (video) {

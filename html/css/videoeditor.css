@@ -387,13 +387,15 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     position: absolute;
     overflow: hidden;
     right: 0px;
-    width: 20px;
+    width: 1px;
     z-index: 100001;
 }
 
+.ui-slider .ui-slider-handle { width: 1px; }
+
 .ui-slider-horizontal .ui-slider-handle { top: 0px; margin-left: 0px; }
 
-.ui-slider .ui-slider-range { position: absolute; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+.ui-slider .ui-slider-range { position: absolute; font-size: 1px; display: block; border: 0; background-position: 0 0; }
 
 .ui-state-highlight { 
     height: 85px;
