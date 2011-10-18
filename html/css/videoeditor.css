@@ -247,20 +247,20 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     color:          #000;
 }
 /* #tab1 = blue-green */
-.custom #tabbuttons .tab1 a     { background: #007182; color: #FFF; } /* override UI Theme */
+.custom #tabbuttons .tab1 a     { background: #204a87; color: #FFF; } /* override UI Theme */
 .custom #tabpanels #tab1,
 .custom #tab1 .ui-layout-resizer-sliding ,
 .custom #tab1 .ui-layout-west ,     /* sidebar panes too - for when 'sliding' */
-.custom #tab1 .ui-layout-east   { background: #83c9d4; }
-.custom #tab1 .ui-layout-resizer-closed { border: 1px solid #378c99; }
+.custom #tab1 .ui-layout-east   { background: #6d9acb; }
+.custom #tab1 .ui-layout-resizer-closed { border: 1px solid #204a87; }
 .custom #tab1 .toolbar          { border:   0; }
 .custom #tab1 .toolbar ,
-.custom #tab1 .ui-widget-header { background: #007182; } /* override UI Theme */
-.custom #tab1 .ui-widget-footer { background: #378c99; }
+.custom #tab1 .ui-widget-header { background: #204a87; } /* override UI Theme */
+.custom #tab1 .ui-widget-footer { background: #204a87; }
 /*
 .custom #tab1 > .ui-layout-center ,
-.custom #tab1 .ui-layout-pane .ui-layout-pane { border: 2px solid #378c99; }
-.custom #tab1 .ui-widget-content    { border: 1px solid #007182; }
+.custom #tab1 .ui-layout-pane .ui-layout-pane { border: 2px solid #204a87; }
+.custom #tab1 .ui-widget-content    { border: 1px solid #204a87; }
 */
 /* #tab2 = green */
 .custom #tabbuttons .tab2 a     { background: #16b81e; color: #FFF; } /* override UI Theme */
@@ -370,13 +370,17 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 
 /* Define colors for selection */
 .media-timeline-container .ui-selecting { background: #BBB; }
-.media-timeline-container .ui-selected { background: #83c9d4; }
+.media-timeline-container .ui-selected { background: #6d9acb; }
 
 #slider-range {
     overflow: hidden;
     width: 100%;
     height: 3px;
     z-index: 100000;
+}
+
+#slider-range .ui-widget-header {
+    background: #6d9acb !important;
 }
 
 .ui-slider-handle {
