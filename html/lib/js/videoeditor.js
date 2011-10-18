@@ -14,6 +14,7 @@ function MediaItem(filename) {
     this._properties["Source"] = "Library";
     if (this._extension == "avi"
         || this._extension == "mp4"
+        || this._extension == "mov"
         || this._extension == "ogg") {
         this._type |= MediaItem.Type.VIDEO;
         this._properties["Type"] = "Video";
