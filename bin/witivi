@@ -13,4 +13,4 @@ WITIVIBIN=`dirname $0`
 WITIVIPREFIX=`dirname $WITIVIBIN`
 WITIVIDATA=$WITIVIPREFIX/share/witivi
 
-$BROWSER -p "file://$WITIVIDATA/launcher.html"
+$BROWSER -a --profile=~ "file://$WITIVIDATA/launcher.html"
