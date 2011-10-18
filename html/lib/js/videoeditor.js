@@ -320,6 +320,10 @@ function initUI() {
         text: false
     }).click(function () {
         previewMedia(mediaTimelineUI);
+        var video = document.getElementById('video-preview');
+        if (video) {
+            video.play();
+        }
     });
     $( "#timeline-new" ).button({
         icons: { primary:  "ui-icon-document" },
