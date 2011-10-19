@@ -260,6 +260,7 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
                     tlObject.inpoint = 0;
                     tlObject.duration = 3e9;
                 }
+                ensureTimelineStop();
                 // add to the timeline to proper position
                 mediaTimelineUI.getMediaTimeline().addObject(
                         mtui.getTimelineObject(), index);
@@ -269,6 +270,7 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
             var tlObject = $(this).context.getMediaTimelineUIItem().getTimelineObject();
             if (mediaTimelineUI.getMediaTimeline().index(tlObject) != index) {
                 //console.log("item has changed position " + mediaTimelineUI.getMediaTimeline().index(tlObject) + " to " + index);
+                ensureTimelineStop();
                 mediaTimelineUI.getMediaTimeline().moveObject(tlObject, index);
             }
         }
@@ -347,6 +349,7 @@ function initUI() {
     }).click(function () {
         // Go through all selected items.
         $(".media-timeline-container .ui-selected").each(function(index) {
+            ensureTimelineStop();
             // Remove the Item from the MediaTimeline Object.
             var tlObject =
                 $(this).context.getMediaTimelineUIItem().getTimelineObject();
@@ -405,6 +408,14 @@ function initUI() {
 
     var video = document.getElementById('video-preview');
     video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
+}
+
+function ensureTimelineStop() {
+    var video = document.getElementById('video-preview');
+    if ((typeof currentPreviewItem != "undefined") &&
+        (currentPreviewItem.constructor.name == "MediaTimelineUI" || currentPreviewItem.constructor.name == "MediaTimelineUIItem")) {
+        video.pause();
+    }
 }
 
 function updateInOutpoints(event, ui){
