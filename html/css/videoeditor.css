@@ -372,7 +372,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .media-timeline-container .ui-selecting { background: #BBB; }
 .media-timeline-container .ui-selected { background: #6d9acb; }
 
-#slider-range {
+#slider-range, #slider-seek {
     overflow: hidden;
     width: 100%;
     height: 3px;
@@ -380,6 +380,10 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 }
 
 #slider-range .ui-widget-header {
+    background: #6d9acb !important;
+}
+
+#slider-seek .ui-widget-header {
     background: #6d9acb !important;
 }
 

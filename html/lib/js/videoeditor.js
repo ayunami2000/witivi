@@ -209,10 +209,10 @@ MediaTimelineUIItem.prototype.getProperties = function() {
 MediaTimelineUIItem.prototype.fillProperties = function() {
     var object = this.getTimelineObject();
 
-    this._properties["Start"] = nsecsToString(object.start);
-    this._properties["Inpoint"] = nsecsToString(object.inpoint);
-    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration);
-    this._properties["Duration"] = nsecsToString(object.duration);
+    this._properties["Start"] = nsecsToString(object.start, true);
+    this._properties["Inpoint"] = nsecsToString(object.inpoint, true);
+    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration, true);
+    this._properties["Duration"] = nsecsToString(object.duration, true);
     //this._properties["Priority"] = "" + object.priority;
 }
 
@@ -293,7 +293,7 @@ MediaTimelineUI.prototype.fillProperties = function() {
             duration += parseFloat(tl.at(index).duration);
         }
     }
-    this._properties["Length"] = nsecsToString(duration);
+    this._properties["Length"] = nsecsToString(duration, true);
 }
 
 MediaTimelineUI.prototype.getProperties = function() {
@@ -317,6 +317,13 @@ function initDataModel() {
 }
 
 function initUI() {
+    $( "#preview-playpause" ).button({
+        icons: { primary:  "ui-icon-play" },
+        text: false
+    }).click(function () {
+        previewPlayPause();
+    });
+
     $( "#timeline-play" ).button({
         icons: { primary:  "ui-icon-play" },
         text: false
@@ -326,6 +333,7 @@ function initUI() {
         if (video) {
             video.play();
         }
+        updatePlayPause();
     });
     $( "#timeline-new" ).button({
         icons: { primary:  "ui-icon-document" },
@@ -401,13 +409,31 @@ function initUI() {
         max: 0,
         values: [0, 0],
         step: 1000 / fps,
-        slide: updateInOutpoints,
+        slide: rangeSliderSlide,
         stop: rangeSliderStop,
         disabled: true
-    });
+    }).hide();
+    $("#slider-seek").slider({
+        range: false,
+        min: 0,
+        max: 0,
+        value: 0,
+        step: 1000 / fps,
+        slide: seekSliderSlide,
+        stop: seekSliderStop,
+        disabled: true
+    }).show();
 
     var video = document.getElementById('video-preview');
-    video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
+    if (video) {
+        video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
+        video.addEventListener("ondurationchanged", setupSliders, false);
+        // following event does not seem to work :(
+        //video.addEventListener("ontimeupdate", updateSliders, false);
+    }
+
+    updatePlayPause();
+    updateCurrentTime();
 }
 
 function ensureTimelineStop() {
@@ -418,8 +444,8 @@ function ensureTimelineStop() {
     }
 }
 
-function updateInOutpoints(event, ui){
-
+function rangeSliderSlide(event, ui){
+    //console.log("rangeSliderSlide");
     // only check for timeline objects case
     if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
         // seek
@@ -434,15 +460,15 @@ function updateInOutpoints(event, ui){
             var inpoint = document.getElementById('valueInpoint');
             if (inpoint && values) {
                 object.inpoint = values[0] * 1e6;
-                inpoint.innerText = nsecsToString(object.inpoint);
+                inpoint.innerText = nsecsToString(object.inpoint, true);
             }
 
             var outpoint = document.getElementById('valueOutpoint');
             var clipDuration = document.getElementById('valueDuration');
             if (outpoint && clipDuration && values) {
                 object.duration = values[1] * 1e6 - object.inpoint;
-                outpoint.innerText = nsecsToString(object.inpoint + object.duration);
-                clipDuration.innerText = nsecsToString(object.duration);
+                outpoint.innerText = nsecsToString(object.inpoint + object.duration, true);
+                clipDuration.innerText = nsecsToString(object.duration, true);
             }
 
             updateTimelineLength();
@@ -451,12 +477,60 @@ function updateInOutpoints(event, ui){
 }
 
 function rangeSliderStop(event, ui) {
-    updateInOutpoints(event, ui);
+    //console.log("rangeSliderStop");
+    rangeSliderSlide(event, ui);
     if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
         var video = document.getElementById('video-preview');
         if (video) {
             video.currentTime = ui.value / 1000.0;
         }
+    }
+}
+
+function seekSliderSlide(event, ui) {
+    //console.log("seekSliderSlide");
+    if ((currentPreviewItem.constructor.name == "MediaItem" && currentPreviewItem._type == MediaItem.Type.VIDEO) ||
+        (currentPreviewItem.constructor.name == "MediaTimelineUI")) {
+        var video = document.getElementById('video-preview');
+        if (video) {
+            video.currentTime = ui.value / 1000.0;
+            //console.log("sliding to " + ui.value);
+        }
+        updateCurrentTime();
+    }
+}
+
+function seekSliderStop(event, ui) {
+    //console.log("seekSliderStop");
+    seekSliderSlide(event, ui);
+}
+
+function updateCurrentTime() {
+    var info = document.getElementById('preview-current-time');
+
+    var videoPreview = $('#video-preview');
+    if (videoPreview.is(":visible")) {
+        info.innerText = nsecsToString(videoPreview[0].currentTime * 1e9, false);
+    } else {
+        info.innerText = "";
+    }
+}
+
+function updateSeekSliderPos() {
+    var video = document.getElementById('video-preview');
+    if (video) {
+        //console.log("current time updating seek slider " + video.currentTime);
+        $('#slider-seek').slider( "option", "value", video.currentTime * 1e3);
+    }
+}
+
+function videoTimeUpdate() {
+    updateCurrentTime();
+    updateSeekSliderPos();
+
+    var video = document.getElementById('video-preview');
+    if (!video.paused) {
+        setTimeout("videoTimeUpdate();", 250);
     }
 }
 
@@ -472,11 +546,7 @@ function fillMediaInfo(item) {
    $('#ui-mediaitem-info').attr('innerHTML', content);
 }
 
-function secsToString(secs) {
-    return nsecsToString(1e9 * secs);
-}
-
-function nsecsToString(nsecs) {
+function nsecsToString(nsecs, showms) {
     if (nsecs < 0 || nsecs >= 18446744073709552000) {
         nsecs = 0;
     }
@@ -491,13 +561,15 @@ function nsecsToString(nsecs) {
     minutes = minutes % 60
 
     var text = (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    // missing sprintf :P
-    if (mseconds >= 100) {
-        text = text + "." + mseconds;
-    } else if (mseconds >= 10) {
-        text = text + ".0" + mseconds;
-    } else if (mseconds > 10) {
-        text = text + ".00" + mseconds;
+    if (typeof showms != "undefined" && showms) {
+        // missing sprintf :P
+        if (mseconds >= 100) {
+            text = text + "." + mseconds;
+        } else if (mseconds >= 10) {
+            text = text + ".0" + mseconds;
+        } else if (mseconds > 10) {
+            text = text + ".00" + mseconds;
+        }
     }
     return text;
 }
@@ -508,6 +580,53 @@ function dumpObject(obj) {
         output += property + ': ' + obj[property] + "\n";
     }
     console.log(output);
+}
+
+function previewPlayPause() {
+    var videoPreview = $('#video-preview');
+    if (videoPreview.is(":visible")) {
+        if (videoPreview[0].paused) {
+            //console.log("go to play");
+            videoPreview[0].play();
+            setTimeout("videoTimeUpdate();", 250);
+        } else {
+            //console.log("go to pause");
+            videoPreview[0].pause();
+        }
+        updatePlayPause();
+    }
+}
+
+function updatePlayPause() {
+    var button = $( "#preview-playpause" );
+    button.show();
+
+    var videoPreview = $('#video-preview');
+
+    if (typeof currentPreviewItem == "undefined" || !videoPreview.is(":visible")) {
+        button.button( "option", "disabled", true );
+        return;
+    } 
+
+    button.button( "option", "disabled", false );
+
+    var options;
+    if ( !videoPreview[0].paused ) {
+        //console.log("this is playing");
+        options = {
+	        label: "pause",
+	        icons: { primary: "ui-icon-pause" }
+        };
+    } else {
+        //console.log("this is paused");
+        options = {
+	        label: "play",
+	        icons: { primary: "ui-icon-play" }
+        };
+    }
+    button.button( "option", options );
+
+    videoTimeUpdate();
 }
 
 function previewMedia(stuff) {
@@ -543,9 +662,21 @@ function previewMedia(stuff) {
     currentPreviewItem.fillProperties();
     fillMediaInfo(currentPreviewItem);
 
+    setupSliders();
+
+    updatePlayPause();
+    updateCurrentTime();
+}
+
+function setupSliders() {
     // setup the inpoint / outpoint slider
+    //console.log("setupSliders");
     if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
+        //console.log("enabling slider for videos range=true");
+        $('#slider-range').show();
+        $('#slider-seek').hide();
         $('#slider-range').slider( "option", "disabled", false );
+        $('#slider-range').slider( "option", "range", true);
         var object = currentPreviewItem.getTimelineObject();
         var min = 0;
         var max = 0;
@@ -564,12 +695,47 @@ function previewMedia(stuff) {
         $('#slider-range').slider( "option", "min", min);
         $('#slider-range').slider( "option", "max", max);
         $('#slider-range').slider( "option", "values", [inpoint, outpoint] );
+    } else if ((currentPreviewItem.constructor.name == "MediaItem" && currentPreviewItem._type == MediaItem.Type.VIDEO) ||
+               (currentPreviewItem.constructor.name == "MediaTimelineUI")) {
+        //console.log("enabling slider for videos range=false");
+        $('#slider-range').hide();
+        $('#slider-seek').show();
+        var video = document.getElementById('video-preview');
+        if (video.duration > 0) {
+            currentPreviewItem.duration = video.duration;
+        }
+        if (currentPreviewItem.duration && currentPreviewItem.duration > 0) {
+            var max = currentPreviewItem.duration * 1e3;
+            $('#slider-seek').slider( "option", "disabled", false);
+            $('#slider-seek').slider( "option", "min", 0);
+            $('#slider-seek').slider( "option", "max", max);
+            $('#slider-seek').slider( "option", "value", 0);
+        } else {
+            $('#slider-seek').slider( "option", "disabled", true);
+        }
     } else {
-        $('#slider-range').slider( "option", "disabled", true );
+        //console.log("disabling sliders");
+        $('#slider-range').hide();
+        $('#slider-seek').show();
+        $('#slider-seek').slider( "option", "disabled", true);
+    }
+}
+
+function updateSliders() {
+    //console.log("updateSliders");
+    if (currentPreviewItem.constructor.name == "MediaTimelineUI") {
+        // we ignore for the timeline segments
+        return;
+    }
+
+    var video = document.getElementById('video-preview');
+    if (video && video.currentTime) {
+        $('#slider-seek').slider( "option", "value", video.currentTime * 1e3);
     }
 }
 
 function refreshMediaInfo(obj) {
+    //console.log("refreshMediaInfo");
     if (currentPreviewItem && currentPreviewItem == obj) {
         obj.fillProperties();
         fillMediaInfo(currentPreviewItem);
@@ -587,7 +753,8 @@ function videoMetadataUpdated() {
         }
         if (video.duration > 0) {
             currentPreviewItem.duration = video.duration;
-            currentPreviewItem._properties["Length"] = nsecsToString(video.duration * 1e9);
+            currentPreviewItem._properties["Length"] = nsecsToString(video.duration * 1e9, true);
+            setupSliders();
         }
     }
 
@@ -635,6 +802,7 @@ function imageMetadataUpdated() {
 }
 
 function updateTimelineLength() {
+    //console.log("updateTimelineLength");
     var info = document.getElementById('timeline-length');
     if (info) {
         var tl = mediaTimelineUI.getMediaTimeline();
@@ -644,7 +812,7 @@ function updateTimelineLength() {
                 duration += parseFloat(tl.at(index).duration);
             }
         }
-        info.innerText = nsecsToString(duration);
+        info.innerText = nsecsToString(duration, true);
     }
 }
 
