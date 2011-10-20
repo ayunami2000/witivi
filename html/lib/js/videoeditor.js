@@ -395,25 +395,6 @@ function initUI() {
         icons: { primary:  "ui-icon-zoomin" },
         text: false
     });
-
-    $( "#library-image" ).button({
-        icons: { primary:  "ui-icon-image" },
-        text: false
-    }).click(function() {
-        mediaLibrary.toggleByType( MediaItem.Type.IMAGE );
-    });
-    $( "#library-video" ).button({
-        icons: { primary:  "ui-icon-video" },
-        text: false
-    }).click(function() {
-        mediaLibrary.toggleByType( MediaItem.Type.VIDEO );
-    });
-    $( "#library-test" ).button({
-        icons: { primary:  "ui-icon-script" },
-        text: false
-    });
-    $( "#library-toolbar").buttonset();
-
     $("#slider-range").slider({
         range: true,
         min: 0,
