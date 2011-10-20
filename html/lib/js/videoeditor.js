@@ -144,7 +144,11 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
     for (var file in files) {
         var item = new MediaItem(files[file]);
         this._mediaItems.push(item);
-        $(".media-library-container").append( item.getThumbnail() );
+        if (item.getType() & MediaItem.Type.VIDEO) {
+            $(".video-library-container").append( item.getThumbnail() );
+        } else if (item.getType() & MediaItem.Type.IMAGE) {
+            $(".image-library-container").append( item.getThumbnail() );
+        } 
     }
 }
 
@@ -323,6 +327,8 @@ function initUI() {
     }).click(function () {
         previewPlayPause();
     });
+
+    $( "#media-library" ).accordion();
 
     $( "#timeline-play" ).button({
         icons: { primary:  "ui-icon-play" },
