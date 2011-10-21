@@ -206,7 +206,7 @@
 
                 <DIV class="ui-layout-west">
                     <!--<DIV class="ui-layout-content">-->
-                        <DIV class="ui-widget-header ui-corner-top" id="library-header">
+                        <DIV class="ui-widget-header ui-corner-top" id="library-header" align="center">
                             Library
                         </DIV>
                         <DIV class="ui-layout-content ui-widget-content media-library-container">
@@ -226,9 +226,21 @@
                 <DIV class="ui-layout-center">
 
                     <DIV class="ui-layout-center">
-                        <DIV class="ui-widget-header ui-corner-top">Preview
+                        <DIV class="ui-widget-header ui-corner-top">
+                            <table width="100%"><tr width="100%">
+                            <td width="30%">
                             <button id="preview-playpause">Play / Pause</button>
                             <span id="preview-current-time"></span>
+                            </td>
+
+                            <td width="40%" align="center">
+                            <span>Preview</span>
+                            </td>
+
+                            <td width="30%">
+                            </td>
+                            </tr></table>
+
                         </DIV>
                         <DIV class="ui-widget-content" align="center">
                             <!-- TODO handle audio only playback? -->
@@ -252,7 +264,7 @@
                     </DIV>
 
                     <DIV class="ui-layout-east">
-                        <DIV class="ui-widget-header ui-corner-top">Info</DIV>
+                        <DIV class="ui-widget-header ui-corner-top" align="center">Info</DIV>
                         <DIV class="ui-widget-content" id="ui-mediaitem-info">
                         <!-- The content of this section is generated according to the current media item -->
                         </DIV>
@@ -262,12 +274,16 @@
                     </DIV>
 
                     <DIV class="ui-layout-south">
-                        <DIV class="ui-widget-header ui-corner-top">
-                        Timeline
-
+                        <DIV class="ui-widget-header ui-corner-top" style="position: relative;">
+                        <table width="100%"><tr width="100%">
+                        <td width="30%">
                         <button id="timeline-play">Play</button>
-                        <span id="timeline-length-title">TOTAL TIME: </span>
+                        <span id="timeline-length-title">LENGTH: </span>
                         <span id="timeline-length">00:00</span>
+                        </td>
+                        <td align="center" width="40%">
+                        <div>Timeline</div>
+                        <td width="30%">
 
                         <!-- TODO add new timeline button, deletes all timeline objects
                         <button id="timeline-new">New empty timeline</button>  -->
@@ -282,6 +298,8 @@
                         <!-- TODO add some zoom in / zoom out buttons 
                         <button id="timeline-zoomout">Zoom out</button>
                         <button id="timeline-zoomin">Zoom in</button>  -->
+                        </td>
+			</tr></table>
 
                         </DIV>
                         <div class="media-timeline-container ui-widget-content collabora-bkg" width="100%" height="100%" style="background-position: center center; height:100px; background-image:url(images/collabora-logo-small.png); background-repeat:no-repeat">
