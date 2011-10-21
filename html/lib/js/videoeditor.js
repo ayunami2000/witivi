@@ -144,7 +144,10 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
     for (var file in files) {
         var item = new MediaItem(files[file]);
         this._mediaItems.push(item);
-        $(".media-library-container").append( item.getThumbnail() );
+        //$(".media-library-container").append( $("li").append( item.getThumbnail() ) );
+        var liTag = document.createElement('li');
+        liTag.appendChild(item.getThumbnail());
+        $(".media-library-container").append(liTag);
     }
 }
 
@@ -424,7 +427,7 @@ function initUI() {
         disabled: true
     }).show();
 
-    $('#flickable3').flickable({ /*section: 'img'*/ });
+    $('#flickable3').flickable({ section: 'li' });
 
     var video = document.getElementById('video-preview');
     if (video) {
