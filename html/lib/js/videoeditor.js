@@ -144,7 +144,11 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
     for (var file in files) {
         var item = new MediaItem(files[file]);
         this._mediaItems.push(item);
-        $(".media-library-container").append( item.getThumbnail() );
+        if (item.getType() & MediaItem.Type.VIDEO) {
+            $(".video-library-container").append( item.getThumbnail() );
+        } else if (item.getType() & MediaItem.Type.IMAGE) {
+            $(".image-library-container").append( item.getThumbnail() );
+        } 
     }
 }
 
@@ -324,6 +328,8 @@ function initUI() {
         previewPlayPause();
     });
 
+    $( "#media-library" ).accordion({fillSpace:true});
+
     $( "#timeline-play" ).button({
         icons: { primary:  "ui-icon-play" },
         text: false
@@ -386,25 +392,6 @@ function initUI() {
         icons: { primary:  "ui-icon-zoomin" },
         text: false
     });
-
-    $( "#library-image" ).button({
-        icons: { primary:  "ui-icon-image" },
-        text: false
-    }).click(function() {
-        mediaLibrary.toggleByType( MediaItem.Type.IMAGE );
-    });
-    $( "#library-video" ).button({
-        icons: { primary:  "ui-icon-video" },
-        text: false
-    }).click(function() {
-        mediaLibrary.toggleByType( MediaItem.Type.VIDEO );
-    });
-    $( "#library-test" ).button({
-        icons: { primary:  "ui-icon-script" },
-        text: false
-    });
-    $( "#library-toolbar").buttonset();
-
     $("#slider-range").slider({
         range: true,
         min: 0,
