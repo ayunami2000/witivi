@@ -450,3 +450,18 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .media-library-container {
     overflow: hidden !important;
 }
+
+.custom .ui-widget-content .ui-state-active {
+    background: #F9F9F9;
+}
+
+.custom #video-library  { 
+    border: 1px solid #AAAAAA; 
+    border-top: 0;
+}
+
+.custom #image-library  { 
+    border: 1px solid #AAAAAA; 
+    border-top: 0;
+}
+
