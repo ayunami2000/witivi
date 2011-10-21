@@ -330,11 +330,6 @@ function initUI() {
 
     $( "#media-library" ).accordion({fillSpace:true});
 
-    $(window).resize(function(){
-        console.log("Function called!\n");
-        $("#media-library").accordion("resize");
-    });
-
     $( "#timeline-play" ).button({
         icons: { primary:  "ui-icon-play" },
         text: false
