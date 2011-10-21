@@ -458,10 +458,12 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .custom #video-library  { 
     border: 1px solid #AAAAAA; 
     border-top: 0;
+    padding: 0;
 }
 
 .custom #image-library  { 
     border: 1px solid #AAAAAA; 
     border-top: 0;
+    padding: 0px;
 }
 
