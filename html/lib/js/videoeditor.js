@@ -369,11 +369,13 @@ function initUI() {
             updateTimelineLength();
 
             // Remove the visual representation of the item.
-            $(this).remove();
+            $(this).effect("fade", {}, 500, function() {
+                $(this).remove();
 
-            if (mediaTimelineUI.getMediaTimeline().numObjects() <= 0) {
-                $('#text-preview-timeline').show();
-            }
+                if (mediaTimelineUI.getMediaTimeline().numObjects() <= 0) {
+                    $('#text-preview-timeline').show();
+                }
+            });
         });
     });
     $( "#timeline-zoomout" ).button({
