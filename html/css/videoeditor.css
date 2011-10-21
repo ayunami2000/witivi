@@ -446,3 +446,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     overflow: hidden !important;
     margin: -5px;
 }
+
+.media-library-container {
+    overflow: hidden !important;
+}
