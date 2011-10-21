@@ -424,6 +424,8 @@ function initUI() {
         disabled: true
     }).show();
 
+    $('#flickable3').flickable({ /*section: 'img'*/ });
+
     var video = document.getElementById('video-preview');
     if (video) {
         video.addEventListener("loadedmetadata", videoMetadataUpdated, false);

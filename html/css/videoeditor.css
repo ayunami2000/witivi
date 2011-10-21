@@ -446,3 +446,28 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     overflow: hidden !important;
     margin: -5px;
 }
+
+#flickable3 {
+    overflow: hidden !important;
+}
+
+#flickable3 img {
+    margin: 0;
+    padding: 10px;
+}
+
+#flickable3 .block {
+    background-color: #EEE;
+    border: 1px solid #CCC;
+}
+
+#flickable3 .block, #flickable3 .space {
+    width: 140px;
+    height: 140px;
+    padding: 5px;
+}
+
+#flickable3 .ui-flickable-container {
+    cursor: pointer;
+}
+
