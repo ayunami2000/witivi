@@ -52,6 +52,9 @@ function MediaItem(filename) {
 
     $(this._thumbnail).bind('click', function() {
         previewMedia(self);
+        // select the clicked item
+        $('.ui-selected').removeClass('ui-selected')
+        $(this).addClass("ui-selected");
     });
 
     return this;
@@ -189,7 +192,7 @@ MediaTimelineUIItem.prototype.setThumbnail= function(thumbnail) {
 
     $(this._thumbnail).bind('click', function() {
         // select the clicked item
-        $('.media-timeline-container .ui-selected').removeClass('ui-selected')
+        $('.ui-selected').removeClass('ui-selected')
         $(this).addClass("ui-selected");
 
         // and preview the item
@@ -246,7 +249,7 @@ function MediaTimelineUI(timeline) {
         opacity: 0.7,
         start: sortableStartEvent
     });
-    $( ".media-timeline-container" ).selectable();
+    //$( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
         mediaTimelineUI.updateMediaTimelineSorting();
     });
@@ -336,9 +339,12 @@ function initUI() {
     $( "#media-library" ).accordion({fillSpace:true});
 
     $( "#timeline-play" ).button({
-        icons: { primary:  "ui-icon-play" },
+        icons: { primary:  "ui-icon-video" },
         text: false
     }).click(function () {
+        $('.ui-selected').removeClass('ui-selected')
+        $(".media-timeline-container img").addClass("ui-selected");
+
         previewMedia(mediaTimelineUI);
         var video = document.getElementById('video-preview');
         if (video) {
