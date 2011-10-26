@@ -1,4 +1,65 @@
 /*
+ * Transition Item Class
+ */
+
+function TransitionItem(type) {
+    this._transitionType = type;
+    this._type = MediaItem.Type.TRANSITION;
+    this._properties = new Array();
+
+    this._properties["Name"] = "Transition";
+
+    // create thumbnail
+    this._thumbnail = new Image();
+    var self = this;
+    this._thumbnail.getMediaItem = function() { return self; }
+    this._thumbnail.setAttribute("src", this.getThumbnailSource());
+    this._thumbnail.setAttribute("width", "75px");
+    this._thumbnail.setAttribute("class",
+            "media-library-item draggable ui-widget-content");
+
+    $(this._thumbnail).draggable({
+        /* Use a helper-clone that is append to 'body'
+         * so is not 'contained' by a pane.
+         */
+        helper: function (x) {
+            var newhelper = $(this).clone();
+            currentDraggedMediaItem = self;
+            return newhelper.appendTo('body').css('zIndex',5).show();
+        },
+        stop : function (x) {
+            currentDraggedMediaItem = false;
+        },
+        connectToSortable : '.media-timeline-container',
+        cursor: 'move',
+        distance: 30,
+        opacity: 0.7
+    });
+
+}
+
+TransitionItem.prototype.getType = function() {
+    return this._type;
+}
+
+TransitionItem.prototype.getProperties = function() {
+    return this._properties;
+}
+
+TransitionItem.prototype.getTransitionType = function() {
+    return this._transitionType;
+}
+
+TransitionItem.prototype.getThumbnailSource = function() {
+    // TODO: implement
+    return "images/placeholder.png";
+}
+
+TransitionItem.prototype.getThumbnail = function() {
+    return this._thumbnail;
+}
+
+/*
  * Media Item class
  */
 
@@ -108,7 +169,8 @@ MediaItem.Type = {
     VIDEO : 2,
     AUDIO : 4,
     TIMELINE_OBJECT : 8,
-    TIMELINE : 16
+    TIMELINE : 16,
+    TRANSITION : 32
 };
 
 /*
@@ -161,7 +223,11 @@ MediaLibrary.prototype.addMediaFiles = function(files) {
 function MediaTimelineUIItem(mediaItem) {
     this._mediaItem = mediaItem;
     this._properties = new Array();
-    this._type = MediaItem.Type.VIDEO;
+    if (mediaItem.getType() & MediaItem.Type.TRANSITION) {
+        this._type = mediaItem.getType();
+    } else {
+        this._type = MediaItem.Type.VIDEO;
+    }
 
     // copy the properties from the media item
     var itemProps = mediaItem.getProperties();
@@ -176,8 +242,11 @@ function MediaTimelineUIItem(mediaItem) {
 
 MediaTimelineUIItem.prototype.getTimelineObject = function() {
     if (!this._timelineObject) {
-        this._timelineObject =
-                new MediaTimelineFileSource(this._mediaItem.getURI());
+        if (this._mediaItem.getType() & (MediaItem.Type.VIDEO | MediaItem.Type.IMAGE | MediaItem.Type.AUDIO)) {
+            this._timelineObject = new MediaTimelineFileSource(this._mediaItem.getURI());
+        } else if (this._mediaItem.getType() & MediaItem.Type.TRANSITION) {
+            this._timelineObject = new MediaTimelineTransitionOperation(this._mediaItem.getTransitionType());
+        }
     }
 
     return this._timelineObject;
@@ -326,6 +395,15 @@ function initDataModel() {
     }
 
     mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
+
+    // load the transitions
+    this._transitionItems = [];
+    for (var type in transitionTypes) {
+        var item = new TransitionItem(transitionTypes[type]);
+        this._transitionItems.push(item);
+        $(".transition-library-container").append( item.getThumbnail() );
+    }
+
 }
 
 function initUI() {
