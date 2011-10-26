@@ -36,6 +36,13 @@ function TransitionItem(type) {
         opacity: 0.7
     });
 
+    $(this._thumbnail).bind('click', function() {
+        previewMedia(self);
+        // select the clicked item
+        $('.ui-selected').removeClass('ui-selected')
+        $(this).addClass("ui-selected");
+    });
+
 }
 
 TransitionItem.prototype.getType = function() {
@@ -58,6 +65,11 @@ TransitionItem.prototype.getThumbnailSource = function() {
 TransitionItem.prototype.getThumbnail = function() {
     return this._thumbnail;
 }
+
+TransitionItem.prototype.fillProperties = function() {
+    // nothing to do, already done :)
+}
+
 
 /*
  * Media Item class
@@ -339,7 +351,7 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
                 if (currentDraggedMediaItem._type == MediaItem.Type.IMAGE) {
                     var tlObject = mtui.getTimelineObject();
                     tlObject.inpoint = 0;
-                    tlObject.duration = 3e9;
+                    tlObject.duration = 5e9;
                 }
                 ensureTimelineStop();
                 // add to the timeline to proper position
@@ -714,12 +726,17 @@ function previewMedia(stuff) {
     var type = MediaItem.Type.UNKNOWN;
     var src;
 
-    if (currentPreviewItem.constructor.name == "MediaItem") {
+    if (currentPreviewItem.constructor.name == "TransitionItem") {
+        console.log("Got transition item");
+        type = MediaItem.Type.TRANSITION;
+    } else if (currentPreviewItem.constructor.name == "MediaItem") {
         type = currentPreviewItem._type;
         src = currentPreviewItem.getFilename();
     } else if (currentPreviewItem.constructor.name == "MediaTimelineUIItem") {
         type = currentPreviewItem.getMediaItem()._type;
-        src = currentPreviewItem.getMediaItem().getFilename();
+        if (!(type & MediaItem.Type.TRANSITION)) {
+            src = currentPreviewItem.getMediaItem().getFilename();
+        }
     } else if (currentPreviewItem.constructor.name == "MediaTimelineUI") {
         type = MediaItem.Type.VIDEO;
         src = "ges://foobar";
@@ -734,6 +751,12 @@ function previewMedia(stuff) {
         $('#text-preview').hide();
         $('#video-preview').hide();
         $('#image-preview').attr('src', src).show();
+    } else if (type == MediaItem.Type.TRANSITION) {
+        // TODO: check what exactly we can do to preview the transition
+        $('#video-preview').hide();
+        $('#image-preview').hide();
+        $('#text-preview-description').text("Transition item. No preview available.");
+        $('#text-preview').show();
     }
 
     // fill the media info pane with current preview item information
