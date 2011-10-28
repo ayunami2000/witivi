@@ -80,10 +80,12 @@ function previewMedia(stuff, uielement, autoplay) {
     if (type == MediaItem.Type.VIDEO && typeof autoplay != "undefined" && autoplay) {
         var video = document.getElementById('video-preview');
         if (video) {
-            video.play();
             if (currentPreviewItem.constructor.name == "MediaTimelineItemUI") {
                 var inpoint = currentPreviewItem.getTimelineObject().inpoint / 1.0e9;
-                setTimeout("document.getElementById('video-preview').currentTime = " + inpoint, 200);
+                setTimeout("document.getElementById('video-preview').currentTime = " + inpoint + ";" +
+                           "document.getElementById('video-preview').play();", 200);
+            } else {
+                video.play();
             }
         }
     }
