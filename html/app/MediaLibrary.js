@@ -22,3 +22,14 @@ MediaLibrary.prototype.addTransitions = function(transitionTypes) {
         item.showInUI();
     }
 }
+
+/*
+ * Media Library UI code
+ */
+
+function initMediaLibraryUI() {
+    // setup
+    $( "#media-library" ).accordion({
+        fillSpace:true
+    });
+}

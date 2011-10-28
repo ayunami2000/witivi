@@ -67,6 +67,7 @@ TransitionItem.prototype.getThumbnail = function() {
 
         $(this._thumbnail).bind('click', function() {
             // TODO transition preview, create timeline on-the-fly to show the transition with two sample images
+            previewMedia(self);
         });
     }
     return this._thumbnail;

@@ -19,6 +19,13 @@ function MediaTimelineItemUI(mediaItem) {
     // overwrite source property for timeline items
     this._properties["Source"] = "Clip";
 
+    // setup default values of inpoint and duration for images
+    var tlObject = this.getTimelineObject();
+    if (mediaItem._type == MediaItem.Type.IMAGE) {
+        tlObject.inpoint = 0;
+        tlObject.duration = 5e9;
+    }
+
     return this;
 }
 
@@ -63,7 +70,7 @@ MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
         $(this._thumbnail).removeClass('ui-selected');
 
         $(this._thumbnail).bind('click', function() {
-            previewMedia(this.getMediaTimelineItemUI(), $(this));
+            previewMedia(this.getMediaTimelineItemUI(), $(this), false);
         });
     }
 }

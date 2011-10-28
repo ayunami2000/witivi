@@ -10,23 +10,27 @@ function MediaTimelineUI(timeline) {
     this._properties = new Array();
     this._properties["Source"] = "Timeline";
     this._properties["Type"] = "Video";
+    this.fillProperties();
 };
 
 MediaTimelineUI.prototype.getMediaTimeline = function() {
     return this._timeline;
 }
 
-MediaTimelineUI.prototype.fillProperties = function() {
-    var tl = this._timeline;
-
-    this._properties["Clips"] = tl.numObjects();
+MediaTimelineUI.prototype.getDuration = function() {
+    var tl = this.getMediaTimeline();
     var duration = 0;
     for(var index = 0;index < tl.numObjects();index++) {
         if (tl.at(index).duration >= 0 && tl.at(index).duration < MAXTIME) {
             duration += parseFloat(tl.at(index).duration);
         }
     }
-    this._properties["Length"] = nsecsToString(duration, true);
+    return duration;
+}
+
+MediaTimelineUI.prototype.fillProperties = function() {
+    this._properties["Clips"] = this.getMediaTimeline().numObjects();
+    this._properties["Length"] = nsecsToString(this.getDuration(), true);
 }
 
 MediaTimelineUI.prototype.getProperties = function() {
@@ -39,17 +43,11 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
         if (typeof($(this).context.getMediaItem) == "undefined") {
             //console.log("new item found: " + index);
             if (currentDraggedMediaItem) {
+                ensureTimelineStop();
                 var mtui = new MediaTimelineItemUI(currentDraggedMediaItem);
                 mtui.setThumbnail($(this).context);
-                if (currentDraggedMediaItem._type == MediaItem.Type.IMAGE) {
-                    var tlObject = mtui.getTimelineObject();
-                    tlObject.inpoint = 0;
-                    tlObject.duration = 5e9;
-                }
-                ensureTimelineStop();
                 // add to the timeline to proper position
-                mediaTimelineUI.getMediaTimeline().addObject(
-                        mtui.getTimelineObject(), index);
+                mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
             }
         } else {
             //console.log("item was here before: " + index);
@@ -68,3 +66,81 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
     setTimeout("updateTimelineLength();", 100);
 };
+
+/*
+ * Media timeline UI functions
+ */
+
+function initMediaTimelineUI() {
+    // setup media timeline container
+    $( ".media-timeline-container" ).sortable({
+        placeholder: 'ui-state-highlight',
+        forcePlaceholderSize: true,
+        tolerance: "pointer",
+        distance: 30,
+        delay: 100,
+        opacity: 0.7,
+        start: sortableStartEvent
+    });
+    //$( ".media-timeline-container" ).selectable();
+    $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
+
+    // setup toolbar buttons for timeline
+    $( "#timeline-play" ).button({
+        icons: { primary:  "ui-icon-video" },
+        text: false
+    }).click(function () {
+        previewMedia(mediaTimelineUI, ".media-timeline-container img", true);
+    });
+
+    $( "#timeline-trash" ).button({
+        icons: { primary:  "ui-icon-trash" },
+        text: false
+    }).click(function () {
+        // Go through all selected items.
+        $(".media-timeline-container .ui-selected").each(function(index) {
+            ensureTimelineStop();
+            // Remove the Item from the MediaTimeline Object.
+            var tlObject = $(this).context.getMediaTimelineItemUI().getTimelineObject();
+            if (tlObject) {
+                mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
+            }
+
+            refreshMediaInfo(currentPreviewItem);
+            updateTimelineLength();
+
+            // Remove the visual representation of the item.
+            $(this).effect("fade", {}, 500, function() {
+                $(this).remove();
+
+                if (mediaTimelineUI.getMediaTimeline().numObjects() <= 0) {
+                    $('#text-preview-timeline').show();
+                }
+            });
+        });
+    });
+}
+
+function ensureTimelineStop() {
+    var video = document.getElementById('video-preview');
+    if ((typeof currentPreviewItem != "undefined") &&
+        (currentPreviewItem.constructor.name == "MediaTimelineUI" || currentPreviewItem.constructor.name == "MediaTimelineItemUI")) {
+        video.pause();
+    }
+}
+
+function updateTimelineLength() {
+    //console.log("updateTimelineLength");
+    var info = document.getElementById('timeline-length');
+    if (info) {
+        info.innerText = nsecsToString(mediaTimelineUI.getDuration(), true);
+    }
+}
+
+function sortableStartEvent(event, ui) {
+    if (ui.placeholder) {
+        ui.placeholder.attr("src", "images/placeholder.png")
+    }
+}
