@@ -94,6 +94,13 @@ MediaItem.prototype.getThumbnail = function() {
     return this._thumbnail;
 };
 
+MediaItem.prototype.showInUI = function() {
+    if (this.getType() & MediaItem.Type.VIDEO) {
+        $(".video-library-container").append( this.getThumbnail() );
+    } else if (this.getType() & MediaItem.Type.IMAGE) {
+        $(".image-library-container").append( this.getThumbnail() );
+    }
+};
 MediaItem.prototype.getProperties = function() {
     return this._properties;
 }
