@@ -3,7 +3,7 @@
  */
 
 function nsecsToString(nsecs, showms) {
-    if (nsecs < 0 || nsecs >= 18446744073709552000) {
+    if (nsecs < 0 || nsecs >= MAXTIME) {
         nsecs = 0;
     }
 

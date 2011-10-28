@@ -356,7 +356,7 @@ function updateTimelineLength() {
         var tl = mediaTimelineUI.getMediaTimeline();
         var duration = 0;
         for(var index = 0;index < tl.numObjects();index++) {
-            if (tl.at(index).duration >= 0 && tl.at(index).duration < 18446744073709552000) {
+            if (tl.at(index).duration >= 0 && tl.at(index).duration < MAXTIME) {
                 duration += parseFloat(tl.at(index).duration);
             }
         }

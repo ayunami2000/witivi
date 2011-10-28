@@ -23,6 +23,20 @@ function initDataModel() {
 }
 
 function initUI() {
+    $( ".media-timeline-container" ).sortable({
+        placeholder: 'ui-state-highlight',
+        forcePlaceholderSize: true,
+        tolerance: "pointer",
+        distance: 30,
+        delay: 100,
+        opacity: 0.7,
+        start: sortableStartEvent
+    });
+    //$( ".media-timeline-container" ).selectable();
+    $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
+        mediaTimelineUI.updateMediaTimelineSorting();
+    });
+
     $( "#preview-playpause" ).button({
         icons: { primary:  "ui-icon-play" },
         text: false

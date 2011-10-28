@@ -4,29 +4,33 @@
 
 function MediaTimelineUI(timeline) {
     this._timeline = timeline;
-    this._properties = new Array();
     this._type = MediaItem.Type.VIDEO;
 
+    // fill properties
+    this._properties = new Array();
     this._properties["Source"] = "Timeline";
     this._properties["Type"] = "Video";
-
-    $( ".media-timeline-container" ).sortable({ 
-        placeholder: 'ui-state-highlight',
-        forcePlaceholderSize: true,
-        tolerance: "pointer",
-        distance: 30,
-        delay: 100,
-        opacity: 0.7,
-        start: sortableStartEvent
-    });
-    //$( ".media-timeline-container" ).selectable();
-    $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
-        mediaTimelineUI.updateMediaTimelineSorting();
-    });
 };
 
 MediaTimelineUI.prototype.getMediaTimeline = function() {
     return this._timeline;
+}
+
+MediaTimelineUI.prototype.fillProperties = function() {
+    var tl = this._timeline;
+
+    this._properties["Clips"] = tl.numObjects();
+    var duration = 0;
+    for(var index = 0;index < tl.numObjects();index++) {
+        if (tl.at(index).duration >= 0 && tl.at(index).duration < MAXTIME) {
+            duration += parseFloat(tl.at(index).duration);
+        }
+    }
+    this._properties["Length"] = nsecsToString(duration, true);
+}
+
+MediaTimelineUI.prototype.getProperties = function() {
+    return this._properties;
 }
 
 MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
@@ -64,20 +68,3 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
     setTimeout("updateTimelineLength();", 100);
 };
-
-MediaTimelineUI.prototype.fillProperties = function() {
-    var tl = this._timeline;
-
-    this._properties["Clips"] = tl.numObjects();
-    var duration = 0;
-    for(var index = 0;index < tl.numObjects();index++) {
-        if (tl.at(index).duration >= 0 && tl.at(index).duration < 18446744073709552000) {
-            duration += parseFloat(tl.at(index).duration);
-        }
-    }
-    this._properties["Length"] = nsecsToString(duration, true);
-}
-
-MediaTimelineUI.prototype.getProperties = function() {
-    return this._properties;
-}
