@@ -37,12 +37,8 @@ function TransitionItem(type) {
     });
 
     $(this._thumbnail).bind('click', function() {
-        previewMedia(self);
-        // select the clicked item
-        $('.ui-selected').removeClass('ui-selected')
-        $(this).addClass("ui-selected");
+        // TODO transition preview, create timeline on-the-fly to show the transition with two sample images 
     });
-
 }
 
 TransitionItem.prototype.getType = function() {

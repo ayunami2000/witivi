@@ -20,7 +20,6 @@ function initDataModel() {
         this._transitionItems.push(item);
         $(".transition-library-container").append( item.getThumbnail() );
     }
-
 }
 
 function initUI() {
@@ -37,10 +36,7 @@ function initUI() {
         icons: { primary:  "ui-icon-video" },
         text: false
     }).click(function () {
-        $('.ui-selected').removeClass('ui-selected')
-        $(".media-timeline-container img").addClass("ui-selected");
-
-        previewMedia(mediaTimelineUI);
+        previewMedia(mediaTimelineUI, ".media-timeline-container img");
         var video = document.getElementById('video-preview');
         if (video) {
             video.play();

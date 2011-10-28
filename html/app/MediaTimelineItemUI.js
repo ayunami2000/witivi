@@ -41,12 +41,7 @@ MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
     $(this._thumbnail).addClass('media-timeline-item ui-widget-content');
 
     $(this._thumbnail).bind('click', function() {
-        // select the clicked item
-        $('.ui-selected').removeClass('ui-selected')
-        $(this).addClass("ui-selected");
-
-        // and preview the item
-        previewMedia(this.getMediaTimelineItemUI());
+        previewMedia(this.getMediaTimelineItemUI(), $(this));
     });
 }
 

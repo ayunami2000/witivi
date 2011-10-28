@@ -144,8 +144,14 @@ function updatePlayPause() {
     videoTimeUpdate();
 }
 
-function previewMedia(stuff) {
+function previewMedia(stuff, uielement) {
     currentPreviewItem = stuff;
+
+    // select the clicked item
+    $('.ui-selected').removeClass('ui-selected');
+    if (typeof uielement != "undefined") {
+        $(uielement).addClass("ui-selected");
+    }
 
     // extract data depending on the stuff
     var type = MediaItem.Type.UNKNOWN;
