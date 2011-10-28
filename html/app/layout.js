@@ -91,27 +91,7 @@ function initLayout() {
 
     // init ALL the tab-layouts - all use the same options
     $("#tab1").layout( tabLayoutOptions );
-
-    if (enableThemeSwitcher) {
-        $(".buttons").show();
-        $(".buttons BUTTON").show();
-        addThemeSwitcher('#outer-north',{ top: '13px', right: '20px' });
-        // if a theme is applied by ThemeSwitch *onLoad*, it may change the height of some content,
-        // so we need to call resizeLayout to 'correct' any header/footer heights affected
-        // call multiple times so fast browsers update quickly, and slower ones eventually!
-        // NOTE: this is only necessary because we are changing CSS *AFTER LOADING* (eg: themeSwitcher)
-        setTimeout( resizePageLayout, 1000 ); /* allow time for browser to re-render for theme */
-        //setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
-    }
 }
-
-/*
- *  Utility methos used for UI Theme Selector
- */
-function toggleCustomTheme () {
-    $('body').toggleClass('custom');
-    resizePageLayout();
-};
 
 function resizePageLayout () {
     var pageLayout = $("body").data("layout");
