@@ -34,6 +34,24 @@ MediaTimelineItemUI.prototype.getTimelineObject = function() {
     return this._timelineObject;
 }
 
+MediaTimelineItemUI.prototype.getMediaItem= function() {
+    return this._mediaItem;
+}
+
+MediaTimelineItemUI.prototype.getProperties = function() {
+    return this._properties;
+}
+
+MediaTimelineItemUI.prototype.fillProperties = function() {
+    var object = this.getTimelineObject();
+
+    this._properties["Start"] = nsecsToString(object.start, true);
+    this._properties["Inpoint"] = nsecsToString(object.inpoint, true);
+    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration, true);
+    this._properties["Duration"] = nsecsToString(object.duration, true);
+    //this._properties["Priority"] = "" + object.priority;
+}
+
 MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
     this._thumbnail = thumbnail;
     var self = this;
@@ -55,22 +73,4 @@ MediaTimelineItemUI.prototype.getThumbnail= function() {
    }
 
     return this._thumbnail;
-}
-
-MediaTimelineItemUI.prototype.getMediaItem= function() {
-    return this._mediaItem;
-}
-
-MediaTimelineItemUI.prototype.getProperties = function() {
-    return this._properties;
-}
-
-MediaTimelineItemUI.prototype.fillProperties = function() {
-    var object = this.getTimelineObject();
-
-    this._properties["Start"] = nsecsToString(object.start, true);
-    this._properties["Inpoint"] = nsecsToString(object.inpoint, true);
-    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration, true);
-    this._properties["Duration"] = nsecsToString(object.duration, true);
-    //this._properties["Priority"] = "" + object.priority;
 }
