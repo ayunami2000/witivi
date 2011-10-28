@@ -16,6 +16,7 @@ function MediaTimelineItemUI(mediaItem) {
         this._properties[prop] = itemProps[prop];
     }
 
+    // overwrite source property for timeline items
     this._properties["Source"] = "Clip";
 
     return this;
@@ -39,6 +40,7 @@ MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
     this._thumbnail.getMediaItem = function() { return self._mediaItem; }
     this._thumbnail.getMediaTimelineItemUI = function() { return self; }
     $(this._thumbnail).addClass('media-timeline-item ui-widget-content');
+    $(this._thumbnail).removeClass('ui-selected');
 
     $(this._thumbnail).bind('click', function() {
         previewMedia(this.getMediaTimelineItemUI(), $(this));
