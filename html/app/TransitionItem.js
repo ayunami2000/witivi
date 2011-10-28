@@ -9,7 +9,7 @@ function TransitionItem(type) {
     // fill the properties
     this._properties = new Array();
     // TODO fill the transition name
-    this._properties["Name"] = "Transition";
+    //this._properties["Name"] = "Transition";
     this._properties["Source"] = "Library";
     this._properties["Type"] = "Transition";
 
