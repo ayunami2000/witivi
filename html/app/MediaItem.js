@@ -111,7 +111,7 @@ MediaItem.prototype.getThumbnail = function() {
         });
 
         $(this._thumbnail).bind('click', function() {
-            previewMedia(self, $(this));
+            previewMedia(self, $(this), true);
         });
     }
     return this._thumbnail;

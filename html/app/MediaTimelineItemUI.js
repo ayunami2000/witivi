@@ -70,7 +70,7 @@ MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
         $(this._thumbnail).removeClass('ui-selected');
 
         $(this._thumbnail).bind('click', function() {
-            previewMedia(this.getMediaTimelineItemUI(), $(this), false);
+            previewMedia(this.getMediaTimelineItemUI(), $(this), true);
         });
     }
 }
