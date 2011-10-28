@@ -5,6 +5,7 @@
 function initDataModel() {
     mediaLibrary = new MediaLibrary();
     mediaLibrary.addMediaFiles(mediaFiles);
+    mediaLibrary.addTransitions(transitionTypes);
 
     if (typeof MediaTimeline == "undefined") {
         $('#text-preview-timeline').attr('innerHTML', "<br><br>ERROR: your browser does not support GES Webkit extension");
@@ -12,14 +13,6 @@ function initDataModel() {
     }
 
     mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
-
-    // load the transitions
-    this._transitionItems = [];
-    for (var type in transitionTypes) {
-        var item = new TransitionItem(transitionTypes[type]);
-        this._transitionItems.push(item);
-        $(".transition-library-container").append( item.getThumbnail() );
-    }
 }
 
 function initUI() {

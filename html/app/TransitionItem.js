@@ -71,3 +71,7 @@ TransitionItem.prototype.getThumbnail = function() {
     }
     return this._thumbnail;
 }
+
+TransitionItem.prototype.showInUI = function() {
+    $(".transition-library-container").append( this.getThumbnail() );
+};
