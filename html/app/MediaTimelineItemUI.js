@@ -44,32 +44,34 @@ MediaTimelineItemUI.prototype.getProperties = function() {
 
 MediaTimelineItemUI.prototype.fillProperties = function() {
     var object = this.getTimelineObject();
-
-    this._properties["Start"] = nsecsToString(object.start, true);
-    this._properties["Inpoint"] = nsecsToString(object.inpoint, true);
-    this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration, true);
-    this._properties["Duration"] = nsecsToString(object.duration, true);
-    //this._properties["Priority"] = "" + object.priority;
+    if (object) {
+        this._properties["Start"] = nsecsToString(object.start, true);
+        this._properties["Inpoint"] = nsecsToString(object.inpoint, true);
+        this._properties["Outpoint"] = nsecsToString(object.inpoint + object.duration, true);
+        this._properties["Duration"] = nsecsToString(object.duration, true);
+        //this._properties["Priority"] = "" + object.priority;
+    }
 }
 
 MediaTimelineItemUI.prototype.setThumbnail= function(thumbnail) {
     this._thumbnail = thumbnail;
-    var self = this;
-    this._thumbnail.getMediaItem = function() { return self._mediaItem; }
-    this._thumbnail.getMediaTimelineItemUI = function() { return self; }
-    $(this._thumbnail).addClass('media-timeline-item ui-widget-content');
-    $(this._thumbnail).removeClass('ui-selected');
+    if (thumbnail) {
+        var self = this;
+        this._thumbnail.getMediaItem = function() { return self._mediaItem; }
+        this._thumbnail.getMediaTimelineItemUI = function() { return self; }
+        $(this._thumbnail).addClass('media-timeline-item ui-widget-content');
+        $(this._thumbnail).removeClass('ui-selected');
 
-    $(this._thumbnail).bind('click', function() {
-        previewMedia(this.getMediaTimelineItemUI(), $(this));
-    });
+        $(this._thumbnail).bind('click', function() {
+            previewMedia(this.getMediaTimelineItemUI(), $(this));
+        });
+    }
 }
 
 MediaTimelineItemUI.prototype.getThumbnail= function() {
     if (!this._thumbnail) {
         this.setThumbnail(new Image());
-        this._thumbnail.setAttribute("src",
-                this._mediaItem.getThumbnailSource());
+        this._thumbnail.setAttribute("src", this._mediaItem.getThumbnailSource());
    }
 
     return this._thumbnail;
