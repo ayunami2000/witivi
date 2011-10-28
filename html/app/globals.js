@@ -19,3 +19,6 @@ var fps = 25;
 
 // constant for maximum value of time
 var MAXTIME = 18446744073709552000;
+
+// enable theme switcher
+var enableThemeSwitcher = false;

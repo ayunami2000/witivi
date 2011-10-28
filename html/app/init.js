@@ -12,12 +12,61 @@ function initDataModel() {
     }
 }
 
-function initUI() {
-    if (typeof MediaTimeline == "undefined") {
-        $('#text-preview-timeline').attr('innerHTML', "<br><br>ERROR: your browser does not support GES Webkit extension");
-        return;
+function initMediaLibraryUI() {
+    // setup
+    $( "#media-library" ).accordion({
+        fillSpace:true
+    });
+}
+
+function initPreviewUI() {
+    // setup toolbar buttons for preview window
+    $( "#preview-playpause" ).button({
+        icons: { primary:  "ui-icon-play" },
+        text: false
+    }).click(function () {
+        previewPlayPause();
+    });
+
+    // setup slider for seeking
+    $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: 0,
+        values: [0, 0],
+        step: 1000 / fps,
+        slide: rangeSliderSlide,
+        stop: rangeSliderStop,
+        disabled: true
+    }).hide();
+
+    // setup slider for inpoint / outpoint editing
+    $("#slider-seek").slider({
+        range: false,
+        min: 0,
+        max: 0,
+        value: 0,
+        step: 1000 / fps,
+        slide: seekSliderSlide,
+        stop: seekSliderStop,
+        disabled: true
+    }).show();
+
+    // setup video
+    var video = document.getElementById('video-preview');
+    if (video) {
+        video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
+        video.addEventListener("ondurationchanged", setupSliders, false);
+        // following event does not seem to work :(
+        //video.addEventListener("ontimeupdate", updateSliders, false);
     }
 
+    updatePlayPause();
+    updateCurrentTime();
+}
+
+function initMediaTimelineUI() {
+    // setup media timeline container
     $( ".media-timeline-container" ).sortable({
         placeholder: 'ui-state-highlight',
         forcePlaceholderSize: true,
@@ -32,15 +81,7 @@ function initUI() {
         mediaTimelineUI.updateMediaTimelineSorting();
     });
 
-    $( "#preview-playpause" ).button({
-        icons: { primary:  "ui-icon-play" },
-        text: false
-    }).click(function () {
-        previewPlayPause();
-    });
-
-    $( "#media-library" ).accordion({fillSpace:true});
-
+    // setup toolbar buttons for timeline
     $( "#timeline-play" ).button({
         icons: { primary:  "ui-icon-video" },
         text: false
@@ -52,22 +93,7 @@ function initUI() {
         }
         updatePlayPause();
     });
-    $( "#timeline-new" ).button({
-        icons: { primary:  "ui-icon-document" },
-        text: false
-    });
-    $( "#timeline-load" ).button({
-        icons: { primary:  "ui-icon-folder-open" },
-        text: false
-    });
-    $( "#timeline-save" ).button({
-        icons: { primary:  "ui-icon-disk" },
-        text: false
-    });
-    $( "#timeline-render" ).button({
-        icons: { primary:  "ui-icon-video" },
-        text: false
-    });
+
     $( "#timeline-trash" ).button({
         icons: { primary:  "ui-icon-trash" },
         text: false
@@ -95,43 +121,17 @@ function initUI() {
             });
         });
     });
-    $( "#timeline-zoomout" ).button({
-        icons: { primary:  "ui-icon-zoomout" },
-        text: false
-    });
-    $( "#timeline-zoomin" ).button({
-        icons: { primary:  "ui-icon-zoomin" },
-        text: false
-    });
-    $("#slider-range").slider({
-        range: true,
-        min: 0,
-        max: 0,
-        values: [0, 0],
-        step: 1000 / fps,
-        slide: rangeSliderSlide,
-        stop: rangeSliderStop,
-        disabled: true
-    }).hide();
-    $("#slider-seek").slider({
-        range: false,
-        min: 0,
-        max: 0,
-        value: 0,
-        step: 1000 / fps,
-        slide: seekSliderSlide,
-        stop: seekSliderStop,
-        disabled: true
-    }).show();
+}
 
-    var video = document.getElementById('video-preview');
-    if (video) {
-        video.addEventListener("loadedmetadata", videoMetadataUpdated, false);
-        video.addEventListener("ondurationchanged", setupSliders, false);
-        // following event does not seem to work :(
-        //video.addEventListener("ontimeupdate", updateSliders, false);
+function initUI() {
+    // check for webkit supporting
+    if (typeof MediaTimeline == "undefined") {
+        $('#text-preview-timeline').attr('innerHTML', "<br><br>ERROR: your browser does not support GES Webkit extension");
+        return;
     }
 
-    updatePlayPause();
-    updateCurrentTime();
+    // initialize each of the panes UI
+    initMediaLibraryUI();
+    initPreviewUI();
+    initMediaTimelineUI();
 }

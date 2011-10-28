@@ -11,7 +11,6 @@ function initLayout() {
     var pageLayoutOptions = {
         name:                   'pageLayout' // only for debugging
     ,   resizeWithWindowDelay:  250     // delay calling resizeAll when window is *still* resizing
-    //, resizeWithWindowMaxDelay: 2000  // force resize every XX ms while window is being resized
     ,   resizable:              false
     ,   slidable:               false
     ,   closable:               false
@@ -36,7 +35,6 @@ function initLayout() {
     var tabLayoutOptions = {
         name:                   'tabPanelLayout' // only for debugging
     ,   resizeWithWindow:       false   // required because layout is 'nested' inside tabpanels container
-    //, resizeWhileDragging:    true    // slow in IE because of the nested layouts
     ,   resizerDragOpacity:     0.5
     ,   north__resizable:       false
     ,   south__resizable:       false
@@ -83,14 +81,7 @@ function initLayout() {
     // then init the layout that wraps them
     pageLayout.panes.center
         .tabs({
-            // using callback addon
             show: $.layout.callbacks.resizeTabLayout
-
-            /* OR using a manual/custom callback
-            show: function (evt, ui) {
-                var tabLayout = $(ui.panel).data("layout");
-                if ( tabLayout ) tabLayout.resizeAll();
-            }*/
         })
         // make the tabs sortable
         .find(".ui-tabs-nav") .sortable({ axis: 'x', zIndex: 2 }) .end()
@@ -101,25 +92,17 @@ function initLayout() {
     // init ALL the tab-layouts - all use the same options
     $("#tab1").layout( tabLayoutOptions );
 
-    //addThemeSwitcher('#outer-north',{ top: '13px', right: '20px' });
-    // if a theme is applied by ThemeSwitch *onLoad*, it may change the height of some content,
-    // so we need to call resizeLayout to 'correct' any header/footer heights affected
-    // call multiple times so fast browsers update quickly, and slower ones eventually!
-    // NOTE: this is only necessary because we are changing CSS *AFTER LOADING* (eg: themeSwitcher)
-    //setTimeout( resizePageLayout, 1000 ); /* allow time for browser to re-render for theme */
-    //setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
-
-    //$( "#draggable" ).draggable({ containment: 'window', scroll: false, helper: "clone" });
-    /*
-    $("#draggable").draggable({
-        //  use a helper-clone that is append to 'body' so is not 'contained' by a pane
-        helper: function () {
-            var newhelper = $(this).clone();
-            // change size of newhelper.children("img")[0];
-            return newhelper.appendTo('body').css('zIndex',5).show();
-        }
-    ,   cursor: 'move'
-    });*/
+    if (enableThemeSwitcher) {
+        $(".buttons").show();
+        $(".buttons BUTTON").show();
+        addThemeSwitcher('#outer-north',{ top: '13px', right: '20px' });
+        // if a theme is applied by ThemeSwitch *onLoad*, it may change the height of some content,
+        // so we need to call resizeLayout to 'correct' any header/footer heights affected
+        // call multiple times so fast browsers update quickly, and slower ones eventually!
+        // NOTE: this is only necessary because we are changing CSS *AFTER LOADING* (eg: themeSwitcher)
+        setTimeout( resizePageLayout, 1000 ); /* allow time for browser to re-render for theme */
+        //setTimeout( resizePageLayout, 5000 ); /* for really slow browsers */
+    }
 }
 
 /*
