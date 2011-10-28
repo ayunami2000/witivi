@@ -7,15 +7,17 @@ function initDataModel() {
     mediaLibrary.addMediaFiles(mediaFiles);
     mediaLibrary.addTransitions(transitionTypes);
 
+    if (typeof MediaTimeline != "undefined") {
+        mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
+    }
+}
+
+function initUI() {
     if (typeof MediaTimeline == "undefined") {
         $('#text-preview-timeline').attr('innerHTML', "<br><br>ERROR: your browser does not support GES Webkit extension");
         return;
     }
 
-    mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());
-}
-
-function initUI() {
     $( ".media-timeline-container" ).sortable({
         placeholder: 'ui-state-highlight',
         forcePlaceholderSize: true,
