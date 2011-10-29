@@ -74,7 +74,7 @@
 
                 <DIV class="ui-layout-west">
                     <!--<DIV class="ui-layout-content">-->
-                        <DIV class="ui-widget-header ui-corner-top" id="library-header" align="center">
+                        <DIV class="ui-widget-header ui-corner-top" id="library-header">
                             Library
                         </DIV>
                         <DIV class="ui-layout-content ui-widget-content media-library-container">
@@ -97,36 +97,35 @@
 
                     <DIV class="ui-layout-center">
                         <DIV class="ui-widget-header ui-corner-top">
-                            <table width="100%"><tr width="100%">
-                                <td width="30%">
+                            <table><tr>
+                                <td class="header-left">
                                 <button id="preview-playpause">Play / Pause</button>
                                 <span id="preview-current-time"></span>
                                 </td>
 
-                                <td width="40%" align="center">
+                                <td class="header-center">
                                 <span>Preview</span>
                                 </td>
 
-                                <td width="30%">
+                                <td class="header-right">
                                 </td>
                             </tr></table>
                         </DIV>
 
-                        <DIV class="ui-widget-content" align="center">
+                        <DIV id="preview-pane-content" class="ui-widget-content">
                             <!-- TODO handle audio only playback? -->
                             <!-- TOOD provide text input entry for input / outpoint -->
-                            <VIDEO ID="video-preview" width="100%" height="100%" hidden></VIDEO>
-                            <IMG ID="image-preview" height="100%" onload="imageMetadataUpdated();" hidden></IMG> 
+                            <VIDEO ID="video-preview" hidden></VIDEO>
+                            <IMG ID="image-preview" onload="imageMetadataUpdated();" hidden></IMG>
                             <DIV ID="text-preview">
                                 <br><br><div id="text-preview-description">Click on a video thubmnail to play it</div><br><br><br>
-                                <IMG src="images/collabora-logo-small.png">
                             </DIV>
                         </DIV>
 
                         <DIV class="ui-widget-footer ui-widget-header ui-corner-bottom">
-                            <DIV style="margin-left: 5px; margin-right: 35px;" width="100%">
-                                <DIV ID="slider-range" align="center" width="95%" style="overflow:hidden; z-index: 100;"></DIV>
-                                <DIV ID="slider-seek" align="center" width="95%" style="overflow:hidden; z-index: 100;"></DIV>
+                            <DIV id="preview-pane-footer">
+                                <DIV ID="slider-range"></DIV>
+                                <DIV ID="slider-seek"></DIV>
                             </DIV>
                         </DIV>
                         <!--
@@ -135,7 +134,7 @@
                     </DIV>
 
                     <DIV class="ui-layout-east">
-                        <DIV class="ui-widget-header ui-corner-top" align="center">Info</DIV>
+                        <DIV class="ui-widget-header ui-corner-top">Info</DIV>
                         <DIV class="ui-widget-content" id="ui-mediaitem-info">
                             <!-- The content of this section is generated according to the current media item -->
                         </DIV>
@@ -145,23 +144,24 @@
                     </DIV>
 
                     <DIV class="ui-layout-south">
-                        <DIV class="ui-widget-header ui-corner-top" style="position: relative;">
-                        <table width="100%"><tr width="100%">
-                            <td width="30%">
+                        <DIV id="timeline-pane-header" class="ui-widget-header ui-corner-top">
+                        <table><tr>
+                            <td class="header-left">
                                 <button id="timeline-play">Play</button>
                                 <span id="timeline-length-title">LENGTH: </span>
                                 <span id="timeline-length">00:00</span>
                             </td>
-                            <td align="center" width="40%">
-                                <div>Timeline</div>
-                            <td width="30%">
-                                <button id="timeline-trash" style="float: right;">Delete timeline object</button>
+                            <td class="header-center">
+                                <span>Timeline</span>
+                            </td>
+                            <td class="header-right">
+                                <button id="timeline-trash">Delete timeline object</button>
                             </td>
                         </tr></table>
 
                         </DIV>
-                        <div class="media-timeline-container ui-widget-content collabora-bkg" width="100%" height="100%" style="background-position: center center; height:100px; background-image:url(images/collabora-logo-small.png); background-repeat:no-repeat">
-                            <DIV ID="text-preview-timeline" align="center">
+                        <div class="media-timeline-container ui-widget-content collabora-bkg">
+                            <DIV ID="text-preview-timeline">
                                 <br>Create your video by<br>
                                 dragging and dropping items from the media library and<br>
                                 setting the inpoints and outpoints of each segment<br>
