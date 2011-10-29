@@ -246,7 +246,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     background:     #F9F9F9;
     color:          #000;
 }
-/* #tab1 = blue-green */
+/* #tab1 */
 .custom #tabbuttons .tab1 a     { background: #204a87; color: #FFF; } /* override UI Theme */
 .custom #tabpanels #tab1,
 .custom #tab1 .ui-layout-resizer-sliding ,
@@ -262,37 +262,6 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .custom #tab1 .ui-layout-pane .ui-layout-pane { border: 2px solid #204a87; }
 .custom #tab1 .ui-widget-content    { border: 1px solid #204a87; }
 */
-/* #tab2 = green */
-.custom #tabbuttons .tab2 a     { background: #16b81e; color: #FFF; } /* override UI Theme */
-.custom #tabpanels #tab2,
-.custom #tab2 .ui-layout-resizer-sliding ,
-.custom #tab2 .ui-layout-west ,     /* sidebar panes too - for when 'sliding' */
-.custom #tab2 .ui-layout-east   { background: #88e48d; }
-.custom #tab2 .ui-layout-resizer-closed { border: 1px solid #4cbf52; }
-.custom #tab2 .toolbar ,
-.custom #tab2 .ui-widget-header { background: #16b81e; border: 0; }
-.custom #tab2 .ui-widget-footer { background: #4cbf52; border: 0; }
-/*
-.custom #tab2 > .ui-layout-center ,
-.custom #tab2 .ui-layout-pane .ui-layout-pane { border: 2px solid #4cbf52; }
-.custom #tab2 .ui-widget-content    { border: 1px solid #16b81e; }
-*/
-/* #tab3 = purple */
-.custom #tabbuttons .tab3 a     { background: #6f2ab8; color: #FFF; } /* override UI Theme */
-.custom #tabpanels #tab3,
-.custom #tab3 .ui-layout-resizer-sliding ,
-.custom #tab3 .ui-layout-west ,     /* sidebar panes too - for when 'sliding' */
-.custom #tab3 .ui-layout-east   { background: #c3a2e4; }
-.custom #tab3 .ui-layout-resizer-closed { border: 1px solid #9055cf; }
-.custom #tab3 .toolbar ,
-.custom #tab3 .ui-widget-header { background: #6f2ab8; }
-.custom #tab3 .ui-widget-footer { background: #9055cf; }
-/*
-.custom #tab3 > .ui-layout-center ,
-.custom #tab3 .ui-layout-pane .ui-layout-pane { border: 2px solid #9055cf; }
-.custom #tab3 .ui-widget-content{ border: 1px solid #6f2ab8; }
-*/
-
 
 /*
     *  Layout Resizers 
@@ -414,6 +383,10 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     border:5px solid #000000;
 }
 
+/*
+ * Scrollbar styling
+ */
+
 ::-webkit-scrollbar {
     width: 35px;
 }
@@ -427,6 +400,10 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
+
+/*
+ * Avoid selection of html elements
+ */
 
 * {
      user-select: none;
@@ -475,4 +452,3 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     border-top: 0;
     padding: 0px;
 }
-
