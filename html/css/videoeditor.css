@@ -457,6 +457,32 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     padding: 0px;
 }
 
+.custom .ui-accordion .ui-accordion-header {
+    background: #6d9acb;
+}
+
+.custom .ui-accordion .ui-accordion-header-active {
+    background: #6d9acb;
+}
+
+.custom .ui-accordion .ui-accordion-header a {
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.custom .ui-accordion .ui-accordion-li-fix {
+    color: #FFFFFF;
+}
+
+.custom .ui-icon-triangle-1-e {
+    color: #FFFFFF;
+    solid: #FFFFFF;
+}
+
+.custom .ui-icon {
+    background-image: url(../lib/js/jquery.ui/themes/base/images/ui-icons_454545_256x240.png)/*{iconsHover}*/;
+}
+
 .ui-widget-header table { width: 100%; }
 .ui-widget-header table tr { width: 100%; }
 .header-left { width: 30%; }
