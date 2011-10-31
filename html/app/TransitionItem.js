@@ -33,8 +33,7 @@ TransitionItem.prototype.fillProperties = function() {
 }
 
 TransitionItem.prototype.getThumbnailSource = function() {
-    // TODO: implement
-    return "images/placeholder.png";
+    return "images/transition_" + this._transitionType + ".png";
 }
 
 TransitionItem.prototype.getThumbnail = function() {
