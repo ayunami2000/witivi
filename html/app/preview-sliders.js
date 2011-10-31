@@ -102,6 +102,7 @@ function rangeSliderSlide(event, ui){
         var video = document.getElementById('video-preview');
         if (video) {
             video.currentTime = ui.value / 1000.0;
+            updateCurrentTime();
         }
 
         var object = currentPreviewItem.getTimelineObject();
@@ -133,6 +134,7 @@ function rangeSliderStop(event, ui) {
         var video = document.getElementById('video-preview');
         if (video) {
             video.currentTime = ui.value / 1000.0;
+            updateCurrentTime();
         }
     }
 }
