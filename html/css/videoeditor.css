@@ -514,6 +514,8 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     height: 100%;
 }
 
+.custom .media-timeline-item-error { background: #FF0000; }
+
 .collabora-bkg {
     background-position: center center !important;
     background-image: url(../images/collabora-logo-small.png) !important;

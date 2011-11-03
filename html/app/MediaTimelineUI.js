@@ -68,7 +68,51 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     // use a timeout, since the timeline might take some time to update some properties
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
     setTimeout("updateTimelineLength();", 100);
-};
+}
+
+MediaTimelineUI.prototype.mediaTimelineSortChanged = function(event, ui) {
+    // clear the errors
+    $(".media-timeline-item-error").removeClass("media-timeline-item-error");
+
+    // find the placeholder and check if we are not putting two transitions in sequence
+    var timelineItems = $(".media-timeline-item");
+    timelineItems.each(function(index, object) {
+        console.log("Index: " + index);
+        if ($(object).hasClass("ui-state-highlight")) {
+            if (currentDraggedMediaItem && currentDraggedMediaItem.getType() & MediaItem.Type.TRANSITION) {
+                // check if the previous item is a transition too
+                if (index > 0) {
+                    var previousItem = timelineItems.get(index-1);
+                    if (previousItem.getMediaItem().getType() & MediaItem.Type.TRANSITION) {
+                        $(object).addClass("media-timeline-item-error");
+                        $(previousItem).addClass("media-timeline-item-error");
+                    }
+                }
+                // and check if the next item is a transition
+                if (index + 1 < timelineItems.length) {
+                    var nextItem = timelineItems.get(index+1);
+                    if (nextItem.getMediaItem().getType() & MediaItem.Type.TRANSITION) {
+                        $(object).addClass("media-timeline-item-error");
+                        $(nextItem).addClass("media-timeline-item-error");
+                    }
+                }
+            }
+        } else {
+            // if the current item is a transition, check if the previous item is a transition too 
+            if (object.getMediaItem().getType() & MediaItem.Type.TRANSITION) {
+                if (index > 0) {
+                    var previousItem = timelineItems.get(index-1);
+                    
+                    if (!$(previousItem).hasClass("ui-state-highlight") && 
+                        (previousItem.getMediaItem().getType() & MediaItem.Type.TRANSITION)) {
+                        $(object).addClass("media-timeline-item-error");
+                        $(previousItem).addClass("media-timeline-item-error");
+                    }
+                }
+            }
+        }
+    });
+}
 
 /*
  * Media timeline UI functions
@@ -77,17 +121,22 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
 function initMediaTimelineUI() {
     // setup media timeline container
     $( ".media-timeline-container" ).sortable({
-        placeholder: 'ui-state-highlight',
+        placeholder: 'ui-state-highlight media-timeline-item',
         forcePlaceholderSize: true,
         tolerance: "pointer",
         distance: 30,
         delay: 100,
         opacity: 0.7,
-        start: sortableStartEvent
+        start: sortableStartEvent,
+        beforeStop: sortableBeforeStopEvent
     });
     //$( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
         mediaTimelineUI.updateMediaTimelineSorting();
+    });
+
+    $( ".media-timeline-container" ).bind( "sort", function(event, ui) {
+        mediaTimelineUI.mediaTimelineSortChanged(event, ui);
     });
 
     // setup toolbar buttons for timeline
@@ -145,6 +194,20 @@ function updateTimelineLength() {
 
 function sortableStartEvent(event, ui) {
     if (ui.placeholder) {
-        ui.placeholder.attr("src", "images/placeholder.png")
+        ui.placeholder.attr("src", "images/placeholder.png");
     }
+}
+
+function sortableBeforeStopEvent(event, ui) {
+    /* TODO: cancel sorting and remove new items in case of timeline errors
+    // check if there is any error in the timeline
+    console.log("Errors: " + $(".media-timeline-item-error").length); 
+    if ($(".media-timeline-item-error").length > 0) {
+        $(".media-timeline-container").sortable('cancel');
+        console.log("Done.");
+    }
+    */
+
+    // clear the errors
+    $(".media-timeline-item-error").removeClass("media-timeline-item-error");
 }

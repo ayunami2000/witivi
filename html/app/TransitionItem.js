@@ -53,6 +53,7 @@ TransitionItem.prototype.getThumbnail = function() {
             helper: function (x) {
                 var newhelper = $(this).clone();
                 currentDraggedMediaItem = self;
+
                 return newhelper.appendTo('body').css('zIndex',5).show();
             },
             stop : function (x) {
