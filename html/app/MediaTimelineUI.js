@@ -41,20 +41,20 @@ MediaTimelineUI.prototype.getProperties = function() {
 }
 
 MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
-    $(".media-timeline-container img").each(function(index) {
+    $(".media-timeline-container img").each(function(index, object) {
         // new element
-        if (typeof($(this).context.getMediaItem) == "undefined") {
+        if (typeof(object.getMediaItem) == "undefined") {
             //console.log("new item found: " + index);
             if (currentDraggedMediaItem) {
                 ensureTimelineStop();
                 var mtui = new MediaTimelineItemUI(currentDraggedMediaItem);
-                mtui.setThumbnail($(this).context);
+                mtui.setThumbnail(object);
                 // add to the timeline to proper position
                 mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
             }
         } else {
             //console.log("item was here before: " + index);
-            var tlObject = $(this).context.getMediaTimelineItemUI().getTimelineObject();
+            var tlObject = object.getMediaTimelineItemUI().getTimelineObject();
             if (mediaTimelineUI.getMediaTimeline().index(tlObject) != index) {
                 //console.log("item has changed position " + mediaTimelineUI.getMediaTimeline().index(tlObject) + " to " + index);
                 ensureTimelineStop();
@@ -77,7 +77,6 @@ MediaTimelineUI.prototype.mediaTimelineSortChanged = function(event, ui) {
     // find the placeholder and check if we are not putting two transitions in sequence
     var timelineItems = $(".media-timeline-item");
     timelineItems.each(function(index, object) {
-        console.log("Index: " + index);
         if ($(object).hasClass("ui-state-highlight")) {
             if (currentDraggedMediaItem && currentDraggedMediaItem.getType() & MediaItem.Type.TRANSITION) {
                 // check if the previous item is a transition too
