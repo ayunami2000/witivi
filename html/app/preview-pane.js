@@ -83,7 +83,9 @@ function previewMedia(stuff, uielement, autoplay) {
             if (currentPreviewItem.constructor.name == "MediaTimelineItemUI") {
                 var inpoint = currentPreviewItem.getTimelineObject().inpoint / 1.0e9;
                 setTimeout("document.getElementById('video-preview').currentTime = " + inpoint + ";" +
-                           "document.getElementById('video-preview').play();", 200);
+                           "document.getElementById('video-preview').play();" +
+                           "updatePlayPause();" +
+                           "updateCurrentTime();", 200);
             } else {
                 video.play();
             }
