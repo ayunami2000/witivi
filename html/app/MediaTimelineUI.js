@@ -43,12 +43,14 @@ MediaTimelineUI.prototype.getProperties = function() {
 MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     var error = ($(".media-timeline-item-error").length > 0);
     if (error) {
+        // rollback the sorting
         $(".media-timeline-container").sortable('cancel');
     }
     $(".media-timeline-container img").each(function(index, object) {
         // new element
-        if (typeof(object.getMediaItem) == "undefined") {
+        if (object.getMediaItem() == currentDraggedMediaItem) {
             if (error) {
+                // remove the newly dragged object in case of error
                 $(object).remove();
             } else {
                 //console.log("new item found: " + index);
@@ -76,6 +78,9 @@ MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
     // use a timeout, since the timeline might take some time to update some properties
     setTimeout("refreshMediaInfo(mediaTimelineUI);", 100);
     setTimeout("updateTimelineLength();", 100);
+
+    // clear the errors
+    $(".media-timeline-item-error").removeClass("media-timeline-item-error");
 }
 
 MediaTimelineUI.prototype.mediaTimelineSortChanged = function(event, ui) {
@@ -86,7 +91,7 @@ MediaTimelineUI.prototype.mediaTimelineSortChanged = function(event, ui) {
     var timelineItems = $(".media-timeline-item");
     timelineItems.each(function(index, object) {
         if ($(object).hasClass("ui-state-highlight")) {
-            if (currentDraggedMediaItem && currentDraggedMediaItem.getType() & MediaItem.Type.TRANSITION) {
+            if (ui.item.get(0).getMediaItem().getType() & MediaItem.Type.TRANSITION) {
                 // check if the previous item is a transition too
                 if (index > 0) {
                     var previousItem = timelineItems.get(index-1);
@@ -128,6 +133,7 @@ MediaTimelineUI.prototype.mediaTimelineSortChanged = function(event, ui) {
 function initMediaTimelineUI() {
     // setup media timeline container
     $( ".media-timeline-container" ).sortable({
+        //revert: true,
         placeholder: 'ui-state-highlight media-timeline-item',
         forcePlaceholderSize: true,
         tolerance: "pointer",
@@ -201,6 +207,19 @@ function updateTimelineLength() {
 function sortableStartEvent(event, ui) {
     if (ui.placeholder) {
         ui.placeholder.attr("src", "images/placeholder.png");
+    }
+
+    // make sure the helper does not have the media-timeline-item class since that class is
+    // used by the sort event to validate the timeline
+    ui.helper.removeClass("media-timeline-item");
+
+    // set the current dragged media item if not set
+    // so that the sort event checks can use it to validate the timeline
+    var item = ui.item.get(0);
+    if (typeof(item.getMediaItem) == 'undefined') {
+        item.getMediaItem = function() {
+            return currentDraggedMediaItem;
+        };
     }
 }
 
