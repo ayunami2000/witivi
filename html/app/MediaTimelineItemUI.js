@@ -36,7 +36,6 @@ MediaTimelineItemUI.prototype.getTimelineObject = function() {
         } else if (this._mediaItem.getType() & MediaItem.Type.TRANSITION) {
             this._timelineObject = new MediaTimelineTransitionOperation(this._mediaItem.getTransitionType());
         } else if (this._mediaItem.getType() & MediaItem.Type.TEST_SOURCE) {
-            console.log("creating " + this._mediaItem.getTestSourceType());
             this._timelineObject = new MediaTimelineTestSource();
             this._timelineObject.videoPattern = this._mediaItem.getTestSourceType();
         }
