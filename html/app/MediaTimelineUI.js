@@ -20,10 +20,11 @@ MediaTimelineUI.prototype.getMediaTimeline = function() {
 MediaTimelineUI.prototype.getDuration = function() {
     var tl = this.getMediaTimeline();
     var duration = 0;
-    for(var index = 0;index < tl.numObjects();index++) {
-        if (tl.at(index).duration >= 0 && tl.at(index).duration < MAXTIME) {
-            duration += parseFloat(tl.at(index).duration);
-        }
+    var numObjects = tl.numObjects();
+    if (numObjects > 0) {
+        var object = tl.at(numObjects - 1);
+        duration += parseFloat(object.start);
+        duration += parseFloat(object.duration);
     }
     return duration;
 }
