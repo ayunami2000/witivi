@@ -28,6 +28,7 @@ function initPreviewUI() {
 
 function previewMedia(stuff, uielement, autoplay) {
     currentPreviewItem = stuff;
+    clearPauseWhenReached();
 
     // select the clicked item
     $('.ui-selected').removeClass('ui-selected');
@@ -81,11 +82,10 @@ function previewMedia(stuff, uielement, autoplay) {
         var video = document.getElementById('video-preview');
         if (video) {
             if (currentPreviewItem.constructor.name == "MediaTimelineItemUI") {
-                var inpoint = currentPreviewItem.getTimelineObject().inpoint / 1.0e9;
-                setTimeout("document.getElementById('video-preview').currentTime = " + inpoint + ";" +
-                           "document.getElementById('video-preview').play();" +
-                           "updatePlayPause();" +
-                           "updateCurrentTime();", 200);
+                var object = currentPreviewItem.getTimelineObject();
+                var inpoint = object.inpoint / 1.0e9;
+                var outpoint = (object.inpoint + object.duration)/ 1.0e9;
+                setTimeout("playInOut("+inpoint+","+outpoint+");", 200);
             } else {
                 video.play();
             }
@@ -94,6 +94,46 @@ function previewMedia(stuff, uielement, autoplay) {
 
     updatePlayPause();
     updateCurrentTime();
+}
+
+function playInOut(inpoint, outpoint) {
+    console.log("inpoint = " + inpoint);
+    console.log("outpoint = " + outpoint);
+    var video = document.getElementById('video-preview');
+    video.currentTime = inpoint;
+    video.play();
+    updatePlayPause();
+    updateCurrentTime();
+    // clear previous if any
+    clearPauseWhenReached();
+    pauseTargetTime = outpoint;
+    pauseTimeoutId = setTimeout("checkOutpointReached()", 200);
+}
+
+var pauseTargetTime = null;
+var pauseTimeoutId = null;
+
+function checkOutpointReached() {
+    if (pauseTargetTime != null) {
+        var video = document.getElementById('video-preview');
+        if (video) {
+            console.log("currenTime= " + video.currentTime);
+            console.log("pauseTargetTime= " + pauseTargetTime);
+            if (video.currentTime >= pauseTargetTime) {
+                video.pause();
+                pauseTimeoutId = null;
+            } else {
+                pauseTimeoutId = setTimeout("checkOutpointReached()", 200);
+            }
+        }
+    }
+}
+
+function clearPauseWhenReached() {
+    if (pauseTimeoutId) {
+        clearTimeout(pauseTimeoutId);
+        pauseTimeoutId = null;
+    }
 }
 
 function updateCurrentTime() {
@@ -150,6 +190,7 @@ function updatePlayPause() {
 }
 
 function previewPlayPause() {
+    clearPauseWhenReached();
     var videoPreview = $('#video-preview');
     if (videoPreview.is(":visible")) {
         if (videoPreview[0].paused) {
