@@ -131,6 +131,7 @@ function ensureTimelineStop() {
     if ((typeof currentPreviewItem != "undefined") &&
         (currentPreviewItem.constructor.name == "MediaTimelineUI" || currentPreviewItem.constructor.name == "MediaTimelineItemUI")) {
         video.pause();
+        video.src = null;
     }
 }
 
