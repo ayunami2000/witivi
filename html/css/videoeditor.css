@@ -458,6 +458,12 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
     padding: 0px;
 }
 
+.custom #test-source-library  {
+    border: 1px solid #AAAAAA;
+    border-top: 0;
+    padding: 0px;
+}
+
 .custom .ui-accordion .ui-accordion-header {
     background: #6d9acb;
 }
