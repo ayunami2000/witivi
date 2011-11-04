@@ -516,7 +516,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 
 .collabora-bkg {
     background-position: center center !important;
-    background-image: url(images/collabora-logo-small.png) !important;
+    background-image: url(../images/collabora-logo-small.png) !important;
     background-repeat: no-repeat !important;
 }
 
