@@ -41,16 +41,24 @@ MediaTimelineUI.prototype.getProperties = function() {
 }
 
 MediaTimelineUI.prototype.updateMediaTimelineSorting = function() {
+    var error = ($(".media-timeline-item-error").length > 0);
+    if (error) {
+        $(".media-timeline-container").sortable('cancel');
+    }
     $(".media-timeline-container img").each(function(index, object) {
         // new element
         if (typeof(object.getMediaItem) == "undefined") {
-            //console.log("new item found: " + index);
-            if (currentDraggedMediaItem) {
-                ensureTimelineStop();
-                var mtui = new MediaTimelineItemUI(currentDraggedMediaItem);
-                mtui.setThumbnail(object);
-                // add to the timeline to proper position
-                mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+            if (error) {
+                $(object).remove();
+            } else {
+                //console.log("new item found: " + index);
+                if (currentDraggedMediaItem) {
+                    ensureTimelineStop();
+                    var mtui = new MediaTimelineItemUI(currentDraggedMediaItem);
+                    mtui.setThumbnail(object);
+                    // add to the timeline to proper position
+                    mediaTimelineUI.getMediaTimeline().addObject(mtui.getTimelineObject(), index);
+                }
             }
         } else {
             //console.log("item was here before: " + index);
@@ -126,8 +134,7 @@ function initMediaTimelineUI() {
         distance: 30,
         delay: 100,
         opacity: 0.7,
-        start: sortableStartEvent,
-        beforeStop: sortableBeforeStopEvent
+        start: sortableStartEvent
     });
     //$( ".media-timeline-container" ).selectable();
     $( ".media-timeline-container" ).bind( "sortupdate", function(event, ui) {
@@ -151,10 +158,10 @@ function initMediaTimelineUI() {
         text: false
     }).click(function () {
         // Go through all selected items.
-        $(".media-timeline-container .ui-selected").each(function(index) {
+        $(".media-timeline-container .ui-selected").each(function(index, object) {
             ensureTimelineStop();
             // Remove the Item from the MediaTimeline Object.
-            var tlObject = $(this).context.getMediaTimelineItemUI().getTimelineObject();
+            var tlObject = object.getMediaTimelineItemUI().getTimelineObject();
             if (tlObject) {
                 mediaTimelineUI.getMediaTimeline().removeObject(tlObject);
             }
@@ -197,16 +204,3 @@ function sortableStartEvent(event, ui) {
     }
 }
 
-function sortableBeforeStopEvent(event, ui) {
-    /* TODO: cancel sorting and remove new items in case of timeline errors
-    // check if there is any error in the timeline
-    console.log("Errors: " + $(".media-timeline-item-error").length); 
-    if ($(".media-timeline-item-error").length > 0) {
-        $(".media-timeline-container").sortable('cancel');
-        console.log("Done.");
-    }
-    */
-
-    // clear the errors
-    $(".media-timeline-item-error").removeClass("media-timeline-item-error");
-}
