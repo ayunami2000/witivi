@@ -106,14 +106,16 @@ function previewMedia(stuff, uielement, autoplay) {
 
 function playInOut(inpoint, outpoint) {
     var video = document.getElementById('video-preview');
-    video.currentTime = inpoint;
-    video.play();
-    updatePlayPause();
-    updateCurrentTime();
-    // clear previous if any
-    clearPauseWhenReached();
-    pauseTargetTime = outpoint;
-    pauseTimeoutId = setTimeout("checkOutpointReached()", 200);
+    if (video) {
+        video.currentTime = inpoint;
+        video.play();
+        updatePlayPause();
+        updateCurrentTime();
+        // clear previous if any
+        clearPauseWhenReached();
+        pauseTargetTime = outpoint;
+        pauseTimeoutId = setTimeout("checkOutpointReached()", 200);
+    }
 }
 
 var pauseTargetTime = null;
