@@ -22,6 +22,7 @@ function initDataModel() {
     mediaLibrary = new MediaLibrary();
     mediaLibrary.addMediaFiles(mediaFiles);
     mediaLibrary.addTransitions(transitionTypes);
+    mediaLibrary.addTestSources(testSourceTypes);
 
     if (typeof MediaTimeline != "undefined") {
         mediaTimelineUI = new MediaTimelineUI(new MediaTimeline());

@@ -42,12 +42,14 @@ function previewMedia(stuff, uielement, autoplay) {
 
     if (currentPreviewItem.constructor.name == "TransitionItem") {
         type = MediaItem.Type.TRANSITION;
+    } else if (currentPreviewItem.constructor.name == "TestSourceItem") {
+        type = MediaItem.Type.TEST_SOURCE;
     } else if (currentPreviewItem.constructor.name == "MediaItem") {
         type = currentPreviewItem._type;
         src = currentPreviewItem.getFilename();
     } else if (currentPreviewItem.constructor.name == "MediaTimelineItemUI") {
         type = currentPreviewItem.getMediaItem()._type;
-        if (!(type & MediaItem.Type.TRANSITION)) {
+        if (!(type & (MediaItem.Type.TRANSITION | MediaItem.Type.TEST_SOURCE))) {
             src = currentPreviewItem.getMediaItem().getFilename();
         }
     } else if (currentPreviewItem.constructor.name == "MediaTimelineUI") {
@@ -69,6 +71,12 @@ function previewMedia(stuff, uielement, autoplay) {
         $('#video-preview').hide();
         $('#image-preview').hide();
         $('#text-preview-description').text("Transition item. No preview available.");
+        $('#text-preview').show();
+    } else if (type == MediaItem.Type.TEST_SOURCE) {
+        // TODO: use a secondary timeline to preview the test source ?
+        $('#video-preview').hide();
+        $('#image-preview').hide();
+        $('#text-preview-description').text("Test Source item. No preview available.");
         $('#text-preview').show();
     }
 

@@ -343,6 +343,7 @@ body.custom , /* class used to trigger 'custom theme' for all elements */
 .video-library-container .ui-selected { background: #6d9acb; }
 .image-library-container .ui-selected { background: #6d9acb; }
 .transition-library-container .ui-selected { background: #6d9acb; }
+.test-source-library-container .ui-selected { background: #6d9acb; }
 
 #slider-range, #slider-seek {
     overflow: hidden;

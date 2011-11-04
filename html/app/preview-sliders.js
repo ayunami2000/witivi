@@ -40,7 +40,8 @@ function setupSliders() {
         var object = currentPreviewItem.getTimelineObject();
         var min = 0;
         var max = 0;
-        if (currentPreviewItem._mediaItem._type == MediaItem.Type.IMAGE) {
+        if (currentPreviewItem._mediaItem._type == MediaItem.Type.IMAGE ||
+            currentPreviewItem._mediaItem._type == MediaItem.Type.TEST_SOURCE) {
             max = 20e3;
         } else {
             if (currentPreviewItem.duration) {

@@ -132,5 +132,6 @@ MediaItem.Type = {
     AUDIO : 4,
     TIMELINE_OBJECT : 8,
     TIMELINE : 16,
-    TRANSITION : 32
+    TRANSITION : 32,
+    TEST_SOURCE : 64
 };
