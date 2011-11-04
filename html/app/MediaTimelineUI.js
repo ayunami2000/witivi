@@ -23,8 +23,10 @@ MediaTimelineUI.prototype.getDuration = function() {
     var numObjects = tl.numObjects();
     if (numObjects > 0) {
         var object = tl.at(numObjects - 1);
-        duration += parseFloat(object.start);
-        duration += parseFloat(object.duration);
+        if (object) {
+            duration += parseFloat(object.start);
+            duration += parseFloat(object.duration);
+        }
     }
     return duration;
 }
