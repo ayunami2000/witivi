@@ -106,7 +106,7 @@ function previewMedia(stuff, uielement, autoplay) {
 
 function playInOut(inpoint, outpoint) {
     var video = document.getElementById('video-preview');
-    if (video) {
+    if (video && video.networkState == HTMLMediaElement.NETWORK_IDLE) {
         video.currentTime = inpoint;
         video.play();
         updatePlayPause();
