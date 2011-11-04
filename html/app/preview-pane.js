@@ -105,8 +105,6 @@ function previewMedia(stuff, uielement, autoplay) {
 }
 
 function playInOut(inpoint, outpoint) {
-    console.log("inpoint = " + inpoint);
-    console.log("outpoint = " + outpoint);
     var video = document.getElementById('video-preview');
     video.currentTime = inpoint;
     video.play();
@@ -125,8 +123,6 @@ function checkOutpointReached() {
     if (pauseTargetTime != null) {
         var video = document.getElementById('video-preview');
         if (video) {
-            console.log("currenTime= " + video.currentTime);
-            console.log("pauseTargetTime= " + pauseTargetTime);
             if (video.currentTime >= pauseTargetTime) {
                 video.pause();
                 pauseTimeoutId = null;
